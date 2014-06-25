@@ -1,0 +1,256 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="GameObject">
+      <UniqueIdentifier>{e345ce42-3791-4809-a020-781edd7eccd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\StateMachines">
+      <UniqueIdentifier>{6f46d2ae-8c0d-4abb-918c-56292cecaf75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\StateMachines\UnitTests">
+      <UniqueIdentifier>{a179d4b6-061b-4f3d-9c2c-102539ec947f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Animation">
+      <UniqueIdentifier>{6421ec35-c595-4d11-9880-8eab345d56fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{e6419b19-d8aa-4526-98b5-78fa8afdfebe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameEngine">
+      <UniqueIdentifier>{a3eab7ee-6f55-4c59-88cc-e5828e15cb20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameEngine\StateMachineLanguage">
+      <UniqueIdentifier>{d5c9dec9-4ff2-413b-a725-991525ec6032}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\body.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\gameobject.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\movement.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\example.cpp">
+      <Filter>GameObject\StateMachines</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\unittest1.cpp">
+      <Filter>GameObject\StateMachines\UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\unittest2a.cpp">
+      <Filter>GameObject\StateMachines\UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\unittest2b.cpp">
+      <Filter>GameObject\StateMachines\UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\unittest2c.cpp">
+      <Filter>GameObject\StateMachines\UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\unittest3a.cpp">
+      <Filter>GameObject\StateMachines\UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\unittest3b.cpp">
+      <Filter>GameObject\StateMachines\UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\unittest4.cpp">
+      <Filter>GameObject\StateMachines\UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\unittest5.cpp">
+      <Filter>GameObject\StateMachines\UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\unittest6.cpp">
+      <Filter>GameObject\StateMachines\UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AllocHierarchy.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AnimationInstance.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Tiny.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DXUT\DXUT.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DXUT\DXUTcamera.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DXUT\DXUTenum.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DXUT\DXUTgui.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DXUT\DXUTmisc.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DXUT\DXUTres.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DXUT\DXUTsettingsdlg.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DXUT\SDKmisc.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DXUT\SDKsound.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DXUT\SDKwavefile.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\database.cpp">
+      <Filter>GameEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\time.cpp">
+      <Filter>GameEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\world.cpp">
+      <Filter>GameEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\debuglog.cpp">
+      <Filter>GameEngine\StateMachineLanguage</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\msg.cpp">
+      <Filter>GameEngine\StateMachineLanguage</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\msgroute.cpp">
+      <Filter>GameEngine\StateMachineLanguage</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\statemch.cpp">
+      <Filter>GameEngine\StateMachineLanguage</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MultiAnimation.cpp" />
+    <ClCompile Include="Source\MultiAnimationLib.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\body.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\gameobject.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\movement.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\example.h">
+      <Filter>GameObject\StateMachines</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\unittest1.h">
+      <Filter>GameObject\StateMachines\UnitTests</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\unittest2a.h">
+      <Filter>GameObject\StateMachines\UnitTests</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\unittest2b.h">
+      <Filter>GameObject\StateMachines\UnitTests</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\unittest2c.h">
+      <Filter>GameObject\StateMachines\UnitTests</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\unittest3a.h">
+      <Filter>GameObject\StateMachines\UnitTests</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\unittest3b.h">
+      <Filter>GameObject\StateMachines\UnitTests</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\unittest4.h">
+      <Filter>GameObject\StateMachines\UnitTests</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\unittest5.h">
+      <Filter>GameObject\StateMachines\UnitTests</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\unittest6.h">
+      <Filter>GameObject\StateMachines\UnitTests</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\resource.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Tiny.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DXUT\DXUT.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DXUT\DXUTcamera.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DXUT\DXUTenum.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DXUT\DXUTgui.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DXUT\DXUTmisc.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DXUT\DXUTres.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DXUT\DXUTsettingsdlg.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DXUT\SDKmisc.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DXUT\SDKsound.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DXUT\SDKwavefile.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\database.h">
+      <Filter>GameEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\global.h">
+      <Filter>GameEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\singleton.h">
+      <Filter>GameEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\time.h">
+      <Filter>GameEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\world.h">
+      <Filter>GameEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\debuglog.h">
+      <Filter>GameEngine\StateMachineLanguage</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\msg.h">
+      <Filter>GameEngine\StateMachineLanguage</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\msgnames.h">
+      <Filter>GameEngine\StateMachineLanguage</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\msgroute.h">
+      <Filter>GameEngine\StateMachineLanguage</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\statemch.h">
+      <Filter>GameEngine\StateMachineLanguage</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MultiAnimation.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Source\DXUT\directx.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="MultiAnimation.manifest">
+      <Filter>Resource Files</Filter>
+    </Manifest>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MultiAnimation.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
