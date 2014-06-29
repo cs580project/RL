@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "debugdrawing.h" // added for final project
+
 class GameObject;
 
 typedef std::list<D3DXVECTOR3> WaypointList;
@@ -37,6 +39,11 @@ public:
 	void SetIdleSpeed( void );
 	void SetWalkSpeed( void );
 	void SetJogSpeed( void );
+
+    // Added for final project.
+    void AddToPath(int r, int c);
+    void ResetPath();
+    void SetWaypointDebugDrawingColor( DebugDrawingColor c) { m_lineColor = c; };
 
 	bool ComputePathWithTiming( int r, int c, bool newRequest );
 	void SetHeuristicWeight( float value )					{ m_heuristicWeight = value; }
@@ -69,6 +76,9 @@ protected:
 	float m_heuristicWeight;
 	int m_heuristicCalc;
 	MovementMode m_movementMode;
+
+    // Added for final project.
+    DebugDrawingColor m_lineColor;
 
 	D3DXVECTOR3 m_target;
 	D3DXVECTOR3 m_goal;

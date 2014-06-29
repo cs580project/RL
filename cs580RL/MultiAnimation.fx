@@ -14,6 +14,7 @@ float4 lhtDir       = { 0.0f, 0.0f, -1.0f, 1.0f };  // Light Direction
 float4 lightDiffuse = { 0.6f, 0.6f, 0.6f, 1.0f };   // Light Diffuse
 float4 MaterialAmbient : MATERIALAMBIENT = { 0.1f, 0.1f, 0.1f, 1.0f };
 float4 MaterialDiffuse : MATERIALDIFFUSE = { 0.8f, 0.8f, 0.8f, 1.0f };
+float4 g_mDiffuse = { 1.0f, 1.0f, 1.0f, 1.0f }; // diffuse multiplier
 
 float4x4 g_mWorld : WORLD;
 float4x4 g_mViewProj : VIEWPROJECTION;
@@ -95,6 +96,7 @@ VS_OUTPUT VertSkinning( VS_INPUT i, uniform int iNumBones )
 
     // Shade (Ambient + etc.)
     o.Diffuse = float4( MaterialAmbient.xyz + saturate( dot( Normal, lhtDir.xyz ) ) * MaterialDiffuse.xyz, 1.0 );
+    o.Diffuse *= g_mDiffuse;
 
     // copy the input texture coordinate through
     o.Tex0  = i.Tex0.xy;

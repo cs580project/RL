@@ -133,6 +133,8 @@ void CAnimInstance::DrawMeshFrame( MultiAnimFrame * pFrame )
         // set the current number of bones; this tells the effect which shader to use
         m_pMultiAnim->m_pEffect->SetInt( "CurNumBones", pMC->m_dwMaxNumFaceInfls - 1 );
 
+        m_pMultiAnim->m_pEffect->SetVector("g_mDiffuse", &m_vec4Diffuse);
+
         // set the technique we use to draw
         if( FAILED( m_pMultiAnim->m_pEffect->SetTechnique( m_pMultiAnim->m_sTechnique ) ) )
             return;
@@ -240,6 +242,11 @@ void CAnimInstance::SetWorldTransform( const D3DXMATRIX * pmxWorld )
     m_mxWorld = * pmxWorld;
 }
 
+void CAnimInstance::SetDiffuse(const D3DXVECTOR4* pvec4Diffuse)
+{
+    assert(pvec4Diffuse != NULL);
+    m_vec4Diffuse = *pvec4Diffuse;
+}
 
 
 

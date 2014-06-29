@@ -187,6 +187,7 @@ protected:
     CMultiAnim                *m_pMultiAnim;
     D3DXMATRIX                 m_mxWorld;
     LPD3DXANIMATIONCONTROLLER  m_pAC;
+    D3DXVECTOR4                m_vec4Diffuse;
 
 private:
 
@@ -207,6 +208,8 @@ public:
 
             D3DXMATRIX  GetWorldTransform();
             void        SetWorldTransform( const D3DXMATRIX * pmxWorld );
+
+            void		SetDiffuse(const D3DXVECTOR4*);
 
     virtual HRESULT     AdvanceTime( DOUBLE dTimeDelta, ID3DXAnimationCallbackHandler * pCH );
     virtual HRESULT     ResetTime();

@@ -141,6 +141,9 @@
     </ClCompile>
     <ClCompile Include="Source\MultiAnimation.cpp" />
     <ClCompile Include="Source\MultiAnimationLib.cpp" />
+    <ClCompile Include="Source\RLagent.cpp">
+      <Filter>GameObject\StateMachines</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\body.h">
@@ -261,6 +264,9 @@
       <Filter>GameEngine\StateMachineLanguage</Filter>
     </ClInclude>
     <ClInclude Include="Source\MultiAnimation.h" />
+    <ClInclude Include="Source\RLagent.h">
+      <Filter>GameObject\StateMachines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Source\DXUT\directx.ico">

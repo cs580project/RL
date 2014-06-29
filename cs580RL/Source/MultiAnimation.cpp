@@ -997,7 +997,8 @@ LRESULT CALLBACK MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bo
 			}
 
 			g_click3D.y = 0.0f;
-			g_database.SendMsgFromSystem( MSG_SetGoal, MSG_Data(g_click3D) );
+            // g_database.SendMsgFromSystem( MSG_SetGoal, MSG_Data(g_click3D)); // Project 2 and 3 version
+            g_database.SendMsgFromSystem( MSG_MouseClick, MSG_Data(g_click3D)); // Project 1 version
 		}
 		return 0;
 	}

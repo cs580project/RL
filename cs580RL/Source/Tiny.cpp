@@ -265,6 +265,10 @@ void CTiny::SetOrientation( void )
 	m_pAI->SetWorldTransform( &mxWorld );
 }
 
+void CTiny::SetDiffuse(float r, float g, float b)
+{
+    m_pAI->SetDiffuse(&D3DXVECTOR4(r, g, b, 1.0f));
+}
 
 
 //-----------------------------------------------------------------------------

@@ -25,6 +25,8 @@
 
 // State machines
 #include "agent.h"
+#include "RLagent.h"
+
 
 // Unit test state machines
 #include "unittest1.h"
@@ -123,16 +125,45 @@ void World::Initialize( CMultiAnim *pMA, std::vector< CTiny* > *pv_pChars, CSoun
 
 #else
 
-	{	//Agent
-		GameObject* agent = new GameObject( g_database.GetNewObjectID(), OBJECT_Player, "Player" );
-		D3DXVECTOR3 pos(0.1f, 0.0f, 0.1f);
+    static const int numberOfMice = 1;
+    for (int i = 0; i < numberOfMice; ++i)
+	{
+        char name[256];
+        sprintf_s(name, 256, "Mouse%i", i);
+
+        //Agent
+		GameObject* agent = new GameObject( g_database.GetNewObjectID(), OBJECT_Player, name );
+		D3DXVECTOR3 pos(0.0f, 0.0f, 0.0f);
 		agent->CreateBody( 100, pos );
 		agent->CreateMovement();
 		agent->CreateTiny( pMA, pv_pChars, pSM, dTimeCurrent );
 		g_database.Store( *agent );
 		agent->CreateStateMachineManager();
-		agent->GetStateMachineManager()->PushStateMachine( *new Agent( *agent ), STATE_MACHINE_QUEUE_0, true );
-	}
+		agent->GetStateMachineManager()->PushStateMachine( *new RLAgent( *agent ), STATE_MACHINE_QUEUE_0, true );
+
+        agent->GetTiny().SetDiffuse(0.f, 0.f, 1.f);
+        agent->GetMovement().SetWaypointDebugDrawingColor(DebugDrawingColor::DEBUG_COLOR_BLUE);
+    }
+
+    static const int numberOfCats = 1;
+    for (int i = 0; i < numberOfCats; ++i)
+    {
+        char name[256];
+        sprintf_s(name, 256, "Cat%i", i);
+
+        //Agent
+        GameObject* agent = new GameObject(g_database.GetNewObjectID(), OBJECT_Player, name);
+        D3DXVECTOR3 pos(1.0f, 0.0f, 1.0f);
+        agent->CreateBody(100, pos);
+        agent->CreateMovement();
+        agent->CreateTiny(pMA, pv_pChars, pSM, dTimeCurrent);
+        g_database.Store(*agent);
+        agent->CreateStateMachineManager();
+        agent->GetStateMachineManager()->PushStateMachine(*new RLAgent(*agent), STATE_MACHINE_QUEUE_0, true);
+
+        agent->GetTiny().SetDiffuse(1.f, 0.f, 0.f);
+        agent->GetMovement().SetWaypointDebugDrawingColor(DebugDrawingColor::DEBUG_COLOR_RED);
+    }
 
 
 #endif

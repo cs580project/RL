@@ -23,7 +23,9 @@ Movement::Movement( GameObject& owner )
 : m_owner( &owner ),
   m_speedWalk( 1.f / 5.7f ),
   m_speedJog( 1.f / 2.3f ),
-  m_movementMode( MOVEMENT_SEEK_TARGET ),
+  // m_movementMode( MOVEMENT_SEEK_TARGET ),            // Project 2 and 3 setting
+  m_movementMode( MOVEMENT_WAYPOINT_LIST ),             // Our project setting
+  m_lineColor( DebugDrawingColor::DEBUG_COLOR_RED ),    // Our project setting
   m_smooth(false),
   m_rubberband(false),
   m_straightline(false),
@@ -223,7 +225,7 @@ void Movement::DrawDebugVisualization( IDirect3DDevice9* pd3dDevice, D3DXMATRIX*
 		D3DXVECTOR3 cur = m_owner->GetBody().GetPos();
 		p0 = last;
 		cur.y = p0.y = 0.01f;
-		g_debugdrawing.DrawLine( pd3dDevice, pViewProj, cur, p0, DEBUG_COLOR_RED, true );
+		g_debugdrawing.DrawLine( pd3dDevice, pViewProj, cur, p0, m_lineColor, true );
 
 		WaypointList::iterator i = m_waypointList.begin();
 		for( WaypointList::iterator i = m_waypointList.begin(); i != m_waypointList.end(); i++ )
@@ -232,8 +234,8 @@ void Movement::DrawDebugVisualization( IDirect3DDevice9* pd3dDevice, D3DXMATRIX*
 			p0.y = 0.01f;
 			p1 = p0;
 			p1.y += 0.03f;
-			g_debugdrawing.DrawLine( pd3dDevice, pViewProj, p0, p1, DEBUG_COLOR_BLACK, false );
-			g_debugdrawing.DrawLine( pd3dDevice, pViewProj, last, p0, DEBUG_COLOR_RED, true );
+			// g_debugdrawing.DrawLine( pd3dDevice, pViewProj, p0, p1, DEBUG_COLOR_BLACK, false ); // Removed for final project because I think it looks ugly.
+			g_debugdrawing.DrawLine( pd3dDevice, pViewProj, last, p0, m_lineColor, true );
 			last = p0;
 		}
 	}
@@ -253,4 +255,15 @@ void Movement::DrawDebugVisualization( IDirect3DDevice9* pd3dDevice, D3DXMATRIX*
 		g_debugdrawing.DrawCircle( pd3dDevice, pViewProj, &cur, radius*4, DEBUG_COLOR_BLACK );
 		g_debugdrawing.DrawCircle( pd3dDevice, pViewProj, &cur, radius*5, DEBUG_COLOR_WHITE );
 	}
+}
+
+void Movement::AddToPath(int r, int c)
+{
+    m_goal = g_terrain.GetCoordinates(r, c);
+    m_waypointList.push_back(m_goal);
+}
+
+void Movement::ResetPath()
+{
+    m_waypointList.clear();
 }

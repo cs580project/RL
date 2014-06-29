@@ -149,7 +149,8 @@ public:
     void SetIdleKey( bool bResetPosition );
     double GetSpeedScale();
 
-	void SetOrientation( void );
+    void SetOrientation(void);
+    void SetDiffuse(float, float, float);
 
     HRESULT RestoreDeviceObjects( LPDIRECT3DDEVICE9 pd3dDevice );
     HRESULT InvalidateDeviceObjects();
