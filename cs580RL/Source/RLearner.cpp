@@ -75,3 +75,11 @@ int RLearner::selectAction(vector<int>& state)
 	return selectedAction;
 }
 
+void RLearner::runTraining(int epochNum)
+{
+	for (int i = 0; i < epochNum; i++) {
+		if (!running) return;
+		runEpoch();
+	}
+}
+

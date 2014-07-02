@@ -123,14 +123,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="RLearner.cpp" />
-    <ClCompile Include="RLPolicy.cpp" />
-    <ClCompile Include="RLWorld.cpp" />
     <ClCompile Include="Source\body.cpp" />
     <ClCompile Include="Source\gameobject.cpp" />
     <ClCompile Include="Source\movement.cpp" />
     <ClCompile Include="Source\agent.cpp" />
     <ClCompile Include="Source\RLagent.cpp" />
+    <ClCompile Include="Source\RLearner.cpp" />
+    <ClCompile Include="Source\RLGame.cpp" />
+    <ClCompile Include="Source\RLPolicy.cpp" />
+    <ClCompile Include="Source\RLWorld.cpp" />
     <ClCompile Include="Source\unittest1.cpp" />
     <ClCompile Include="Source\unittest2a.cpp" />
     <ClCompile Include="Source\unittest2b.cpp" />
@@ -172,14 +173,15 @@
     <ClCompile Include="Source\MultiAnimationLib.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="RLearner.h" />
-    <ClInclude Include="RLPolicy.h" />
-    <ClInclude Include="RLWorld.h" />
     <ClInclude Include="Source\body.h" />
     <ClInclude Include="Source\gameobject.h" />
     <ClInclude Include="Source\movement.h" />
     <ClInclude Include="Source\agent.h" />
     <ClInclude Include="Source\RLagent.h" />
+    <ClInclude Include="Source\RLearner.h" />
+    <ClInclude Include="Source\RLGame.h" />
+    <ClInclude Include="Source\RLPolicy.h" />
+    <ClInclude Include="Source\RLWorld.h" />
     <ClInclude Include="Source\unittest1.h" />
     <ClInclude Include="Source\unittest2a.h" />
     <ClInclude Include="Source\unittest2b.h" />

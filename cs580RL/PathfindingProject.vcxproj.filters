@@ -26,6 +26,9 @@
     <Filter Include="GameEngine\StateMachineLanguage">
       <UniqueIdentifier>{aad34aee-70b3-49bb-9a71-3b45e473fea0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ReinforcementLearning">
+      <UniqueIdentifier>{01da39f7-495a-47a2-9086-d69c7b47fe30}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\body.cpp">
@@ -144,14 +147,17 @@
     <ClCompile Include="Source\RLagent.cpp">
       <Filter>GameObject\StateMachines</Filter>
     </ClCompile>
-    <ClCompile Include="RLearner.cpp">
-      <Filter>GameEngine</Filter>
+    <ClCompile Include="Source\RLearner.cpp">
+      <Filter>ReinforcementLearning</Filter>
     </ClCompile>
-    <ClCompile Include="RLPolicy.cpp">
-      <Filter>GameEngine</Filter>
+    <ClCompile Include="Source\RLGame.cpp">
+      <Filter>ReinforcementLearning</Filter>
     </ClCompile>
-    <ClCompile Include="RLWorld.cpp">
-      <Filter>GameEngine</Filter>
+    <ClCompile Include="Source\RLPolicy.cpp">
+      <Filter>ReinforcementLearning</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RLWorld.cpp">
+      <Filter>ReinforcementLearning</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -276,14 +282,17 @@
     <ClInclude Include="Source\RLagent.h">
       <Filter>GameObject\StateMachines</Filter>
     </ClInclude>
-    <ClInclude Include="RLearner.h">
-      <Filter>GameEngine</Filter>
+    <ClInclude Include="Source\RLearner.h">
+      <Filter>ReinforcementLearning</Filter>
     </ClInclude>
-    <ClInclude Include="RLPolicy.h">
-      <Filter>GameEngine</Filter>
+    <ClInclude Include="Source\RLGame.h">
+      <Filter>ReinforcementLearning</Filter>
     </ClInclude>
-    <ClInclude Include="RLWorld.h">
-      <Filter>GameEngine</Filter>
+    <ClInclude Include="Source\RLPolicy.h">
+      <Filter>ReinforcementLearning</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RLWorld.h">
+      <Filter>ReinforcementLearning</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

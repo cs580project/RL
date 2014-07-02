@@ -20,7 +20,7 @@ public:
 	
 	RLearner();
 	~RLearner();
-
+	void runTraining(int epochNum);
 	void runEpoch();
 	bool running;
 private:

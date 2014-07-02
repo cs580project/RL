@@ -8,7 +8,6 @@ public:
 	~RLWorld();
 
 	float getReward();
-	void getWorldInfo();
 	vector<int>& getNextState(int action);
 	vector<int>& getCurrentState();
 	void resetState();
