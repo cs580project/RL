@@ -144,6 +144,15 @@
     <ClCompile Include="Source\RLagent.cpp">
       <Filter>GameObject\StateMachines</Filter>
     </ClCompile>
+    <ClCompile Include="RLearner.cpp">
+      <Filter>GameEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="RLPolicy.cpp">
+      <Filter>GameEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="RLWorld.cpp">
+      <Filter>GameEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\body.h">
@@ -266,6 +275,15 @@
     <ClInclude Include="Source\MultiAnimation.h" />
     <ClInclude Include="Source\RLagent.h">
       <Filter>GameObject\StateMachines</Filter>
+    </ClInclude>
+    <ClInclude Include="RLearner.h">
+      <Filter>GameEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="RLPolicy.h">
+      <Filter>GameEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="RLWorld.h">
+      <Filter>GameEngine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

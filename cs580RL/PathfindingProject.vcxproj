@@ -123,6 +123,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="RLearner.cpp" />
+    <ClCompile Include="RLPolicy.cpp" />
+    <ClCompile Include="RLWorld.cpp" />
     <ClCompile Include="Source\body.cpp" />
     <ClCompile Include="Source\gameobject.cpp" />
     <ClCompile Include="Source\movement.cpp" />
@@ -169,6 +172,9 @@
     <ClCompile Include="Source\MultiAnimationLib.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="RLearner.h" />
+    <ClInclude Include="RLPolicy.h" />
+    <ClInclude Include="RLWorld.h" />
     <ClInclude Include="Source\body.h" />
     <ClInclude Include="Source\gameobject.h" />
     <ClInclude Include="Source\movement.h" />
