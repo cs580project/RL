@@ -9,10 +9,11 @@ public:
 	~RLPolicy();
 
 	map<vector<int>, vector<float>> qValueTable;
-	vector<float>& getQValue(vector<int> state);
-	void setQValue(vector<int> state, int acton, float qvalue);
+	vector<float>& getQValues(vector<int> state);
+	float getQValue(vector<int> state, int action);
+	void setQValue(vector<int> state, int action, float qvalue);
 	int getBestAction(vector<int> state);
-
+	float getMaxQValue(vector<int> state);
 private:
 	int actionNum;
 };
