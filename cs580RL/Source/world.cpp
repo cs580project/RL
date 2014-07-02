@@ -166,6 +166,7 @@ void World::Initialize( CMultiAnim *pMA, std::vector< CTiny* > *pv_pChars, CSoun
     }
 
 
+
 #endif
 
 	}

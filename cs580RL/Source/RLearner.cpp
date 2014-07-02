@@ -2,7 +2,7 @@
 #include "RLearner.h"
 
 
-RLearner::RLearner() :policy(6)
+RLearner::RLearner(RLWorld& world) :theWorld(world),policy(6)
 {
 }
 
@@ -81,5 +81,10 @@ void RLearner::runTraining(int epochNum)
 		if (!running) return;
 		runEpoch();
 	}
+}
+
+RLPolicy& RLearner::getPolicy()
+{
+	return policy;
 }
 

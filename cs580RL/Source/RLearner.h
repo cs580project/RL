@@ -17,12 +17,14 @@ enum SelectActionMethod
 class RLearner
 {
 public:
-	
-	RLearner();
+	RLearner(){}
+	RLearner(RLWorld& world);
 	~RLearner();
 	void runTraining(int epochNum);
 	void runEpoch();
 	bool running;
+	RLPolicy& getPolicy();
+
 private:
 	RLPolicy policy;
 	RLWorld theWorld;
