@@ -811,6 +811,34 @@ void RenderText()
 	txtHelper.DrawFormattedTextLine(L"Punish:%f", g_punish);
 	txtHelper.SetInsertionPos(5, 20);
 	txtHelper.DrawFormattedTextLine(L"Reward:%f", g_reward);
+
+
+	//print speed info
+	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
+	txtHelper.SetInsertionPos(5, 40);
+	switch (g_RLspeed)
+	{
+	case RL_singlestep:
+		txtHelper.DrawFormattedTextLine(L"Speed Level:	Single step");
+		break;
+	case RL_slow:
+		txtHelper.DrawFormattedTextLine(L"Speed Level:	Slow");
+		break;
+	case RL_medium:
+		txtHelper.DrawFormattedTextLine(L"Speed Level:	Medium");
+		break;
+	case RL_fast:
+		txtHelper.DrawFormattedTextLine(L"Speed Level:	Fast");
+		break;
+	case RL_turbo:
+		txtHelper.DrawFormattedTextLine(L"Speed Level:	Turbo");
+		break;
+	default:
+		txtHelper.DrawFormattedTextLine(L"Speed Level:	Single step");
+		break;
+	}
+
+
 	/*
     // Dump out the FPS and device stats
     //txtHelper.SetInsertionPos( 5, 150 );
@@ -906,7 +934,7 @@ void RenderText()
     txtHelper.SetForegroundColor( D3DXCOLOR( 1.0f, 0.0f, 0.0f, 1.0f ) );
 	dbCompositionList list;
 	g_database.ComposeList( list, OBJECT_Ignore_Type );
-	int starttext = y+=50;
+	int starttext = y+=60;
 	int count = 0;
 	dbCompositionList::iterator i;
 	for( i=list.begin(); i!=list.end(); ++i )
@@ -1146,8 +1174,8 @@ void CALLBACK OnGUIEvent( UINT nEvent, int nControlID, CDXUTControl* pControl, v
 */
         }
 
-			/*
-        case IDC_NEXTMAP:
+			
+/*      case IDC_NEXTMAP:
 			g_terrain.NextMap();
 			break;
 
@@ -1175,9 +1203,9 @@ void CALLBACK OnGUIEvent( UINT nEvent, int nControlID, CDXUTControl* pControl, v
 			else if( g_heuristicWeight == 1.5f )	{ g_heuristicWeight = 2.0f; }
 			else									{ g_heuristicWeight = 0.0f; }
 			g_database.SendMsgFromSystem( MSG_SetHeuristicWeight, MSG_Data( g_heuristicWeight ) );
-			break;*/
+			break;
 
-/*		case IDC_TOGGLEHEURISTIC:
+		case IDC_TOGGLEHEURISTIC:
 			if( g_heuristicCalc == 0 )				{ g_heuristicCalc = 1; }
 			else if( g_heuristicCalc == 1 )			{ g_heuristicCalc = 2; }
 			else if( g_heuristicCalc == 2 )			{ g_heuristicCalc = 3; }
@@ -1322,7 +1350,7 @@ case IDC_PUNISH:
 	else if (g_punish == 1.2f)	{ g_punish = 1.5f; }
 	else if (g_punish == 1.5f)	{ g_punish = 2.0f; }
 	else						{ g_punish = 0.0f; }
-//	g_database.SendMsgFromSystem(MSG_SetHeuristicWeight, MSG_Data(g_heuristicWeight));
+	g_database.SendMsgFromSystem(MSG_SetPunish, MSG_Data(g_punish));
 	break;
 
 case IDC_REWARD:
@@ -1331,25 +1359,31 @@ case IDC_REWARD:
 	else if (g_reward == 1.2f)	{ g_reward = 1.5f; }
 	else if (g_reward == 1.5f)	{ g_reward = 2.0f; }
 	else						{ g_reward = 0.0f; }
-	//	g_database.SendMsgFromSystem(MSG_SetHeuristicWeight, MSG_Data(g_heuristicWeight));
+	g_database.SendMsgFromSystem(MSG_SetReward, MSG_Data(g_reward));
 	break;
 case IDC_LOOP_1000:
 	g_trainloop = 1000;
+	g_database.SendMsgFromSystem(MSG_SetTrainLoop, MSG_Data(g_trainloop));
 	break;
 case IDC_LOOP_3000:
 	g_trainloop = 3000;
+	g_database.SendMsgFromSystem(MSG_SetTrainLoop, MSG_Data(g_trainloop));
 	break;
 case IDC_LOOP_5000:
 	g_trainloop = 5000;
+	g_database.SendMsgFromSystem(MSG_SetTrainLoop, MSG_Data(g_trainloop));
 	break;
 case IDC_LOOP_10000:
 	g_trainloop = 10000;
+	g_database.SendMsgFromSystem(MSG_SetTrainLoop, MSG_Data(g_trainloop));
 	break;
 case IDC_METHOD_QL:
 	g_useQR = true;
+	g_database.SendMsgFromSystem(MSG_SetMethod_UseQL, MSG_Data(g_useQR));
 	break;
 case IDC_METHOD_SARSA:
 	g_useQR = false;
+	g_database.SendMsgFromSystem(MSG_SetMethod_UseQL, MSG_Data(g_useQR));
 	break;
 case IDC_RESET:
 	break;
@@ -1359,14 +1393,19 @@ case IDC_START_PLAYING:
 	break;
 
 case IDC_SPEED_SINGLESTEP:
+	g_RLspeed = RL_singlestep;
 	break;
 case IDC_SPEED_SLOW:
+	g_RLspeed = RL_slow;
 	break;
 case IDC_SPEED_MEDIUM:
+	g_RLspeed = RL_medium;
 	break;
 case IDC_SPEED_FAST:
+	g_RLspeed = RL_fast;
 	break;
 case IDC_SPEED_TURBO:
+	g_RLspeed = RL_turbo;
 	break;
 
 
