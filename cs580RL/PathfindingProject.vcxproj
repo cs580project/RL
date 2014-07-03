@@ -128,6 +128,10 @@
     <ClCompile Include="Source\movement.cpp" />
     <ClCompile Include="Source\agent.cpp" />
     <ClCompile Include="Source\RLagent.cpp" />
+    <ClCompile Include="Source\RLearner.cpp" />
+    <ClCompile Include="Source\RLGame.cpp" />
+    <ClCompile Include="Source\RLPolicy.cpp" />
+    <ClCompile Include="Source\RLWorld.cpp" />
     <ClCompile Include="Source\unittest1.cpp" />
     <ClCompile Include="Source\unittest2a.cpp" />
     <ClCompile Include="Source\unittest2b.cpp" />
@@ -174,6 +178,10 @@
     <ClInclude Include="Source\movement.h" />
     <ClInclude Include="Source\agent.h" />
     <ClInclude Include="Source\RLagent.h" />
+    <ClInclude Include="Source\RLearner.h" />
+    <ClInclude Include="Source\RLGame.h" />
+    <ClInclude Include="Source\RLPolicy.h" />
+    <ClInclude Include="Source\RLWorld.h" />
     <ClInclude Include="Source\unittest1.h" />
     <ClInclude Include="Source\unittest2a.h" />
     <ClInclude Include="Source\unittest2b.h" />
