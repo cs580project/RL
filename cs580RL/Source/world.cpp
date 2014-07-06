@@ -26,7 +26,7 @@
 // State machines
 #include "agent.h"
 #include "RLagent.h"
-
+#include "RLGame.h"
 
 // Unit test state machines
 #include "unittest1.h"
@@ -166,6 +166,11 @@ void World::Initialize( CMultiAnim *pMA, std::vector< CTiny* > *pv_pChars, CSoun
     }
 
 
+    // Create supervisor
+    GameObject* manager = new GameObject(g_database.GetNewObjectID(), OBJECT_Gameflow, "StateManager");
+    g_database.Store(*manager);
+    manager->CreateStateMachineManager();
+    manager->GetStateMachineManager()->PushStateMachine(*new RLGame(*manager), STATE_MACHINE_QUEUE_0, true);
 
 #endif
 
