@@ -31,6 +31,14 @@ using namespace std;
 #define TXFILE_FLOOR L"floor.jpg"
 #define FLOOR_TILECOUNT 2
 
+enum RLSpeed
+{
+	RL_singlestep = 0,
+	RL_slow,
+	RL_medium,
+	RL_fast,
+	RL_turbo
+};
 
 //--------------------------------------------------------------------------------------
 // Global variables
@@ -69,6 +77,15 @@ bool					g_aStarUsesAnalysis = false;//Default A* uses analysis
 bool                    g_movementFlag = true;//Agent will move by default
 bool                    g_fogOfWarFlag = false;//Agent has Fog of War disabled by default
 
+float					g_punish = 0.0f;		//Default punishment
+float					g_reward = 0.0f;		//Default reward
+int						g_trainloop = 1000;		//Default loop time
+bool					g_useQR = true;			//Default use Q-Learing
+RLSpeed					g_RLspeed = RL_singlestep;			//Default speed(single step)
+
+unsigned int			catWin = 0;				
+unsigned int			mouseWin = 0;
+
 D3DXVECTOR3				g_click2D;
 D3DXVECTOR3				g_click3D;
 
@@ -102,6 +119,24 @@ D3DXVECTOR3				g_click3D;
 #define IDC_RUNTIMINGSSHORT     25
 #define IDC_RUNTIMINGSLONG      26
 #define IDC_TOGGLEFOW           27
+
+#define IDC_PUNISH 28
+#define IDC_REWARD 29
+#define IDC_LOOP_1000 30
+#define IDC_LOOP_3000 31
+#define IDC_LOOP_5000 32
+#define IDC_LOOP_10000 33
+#define IDC_METHOD_QL 34
+#define IDC_METHOD_SARSA 35
+#define IDC_START_TRAINING 36
+#define IDC_RESET 37
+#define IDC_START_PLAYING 38
+#define IDC_SPEED_SINGLESTEP 39
+#define IDC_SPEED_SLOW 40
+#define IDC_SPEED_MEDIUM 41
+#define IDC_SPEED_FAST 42
+#define IDC_SPEED_TURBO 43
+
 
 //--------------------------------------------------------------------------------------
 // Forward declarations
@@ -209,7 +244,8 @@ void InitApp()
 
     g_SampleUI.SetCallback( OnGUIEvent ); iY = 10;
 
-    g_SampleUI.AddButton( IDC_NEXTMAP, L"Next Map", 45, iY, 120, 24 );
+	
+ /* g_SampleUI.AddButton( IDC_NEXTMAP, L"Next Map", 45, iY, 120, 24 );
     g_SampleUI.AddButton( IDC_TOGGLECAM, L"Toggle Camera", 45, iY += 26, 120, 24 );
     g_SampleUI.AddButton( IDC_TOGGLEHEURISTICWEIGHT, L"Toggle Weight", 45, iY += 26, 120, 24 );
     g_SampleUI.AddButton( IDC_TOGGLEHEURISTIC, L"Toggle Heuristic", 45, iY += 26, 120, 24 );
@@ -224,7 +260,30 @@ void InitApp()
     g_SampleUI.AddButton( IDC_TOGGLEFOW, L"Fog of War", 45, iY += 26, 120, 24 );
     g_SampleUI.AddButton( IDC_RUNTIMINGSSHORT, L"Timing Test Short", 45, iY += 26, 120, 24 );
     g_SampleUI.AddButton( IDC_RUNTIMINGSLONG, L"Timing Test Long", 45, iY += 26, 120, 24 );	
+	*/
 	
+	g_SampleUI.AddButton(IDC_PUNISH,L"Punish",40,iY,60,24);
+	g_SampleUI.AddButton(IDC_REWARD,L"Reward",100, iY, 60, 24);
+
+	g_SampleUI.AddButton(IDC_LOOP_1000, L"1000", 40, iY+=26, 60, 24);
+	g_SampleUI.AddButton(IDC_LOOP_3000, L"3000", 100, iY, 60, 24);
+
+	g_SampleUI.AddButton(IDC_LOOP_5000, L"5000", 40, iY += 26, 60, 24);
+	g_SampleUI.AddButton(IDC_LOOP_10000, L"10000", 100, iY, 60, 24);
+
+	g_SampleUI.AddButton(IDC_METHOD_QL, L"Q-Learning", 40, iY += 52, 60, 24);
+	g_SampleUI.AddButton(IDC_METHOD_SARSA, L"SARSA", 100, iY, 60, 24);
+
+	g_SampleUI.AddButton(IDC_START_TRAINING, L"Start training", 40, iY += 52, 120, 48);
+
+	g_SampleUI.AddButton(IDC_RESET, L"Reset", 40, iY += 100, 120, 48);
+	g_SampleUI.AddButton(IDC_START_PLAYING, L"Start playing", 40, iY += 52, 120, 48);
+
+	g_SampleUI.AddButton(IDC_SPEED_SINGLESTEP, L"Singlestep", -350, iY += 140, 70, 16);
+	g_SampleUI.AddButton(IDC_SPEED_SLOW, L"Slow", -260, iY, 70, 16);
+	g_SampleUI.AddButton(IDC_SPEED_MEDIUM, L"Medium", -170, iY, 70, 16);
+	g_SampleUI.AddButton(IDC_SPEED_FAST, L"Fast", -80, iY, 70, 16);
+	g_SampleUI.AddButton(IDC_SPEED_TURBO, L"Turbo", 10, iY, 70, 16);
 
     // Add mixed vp to the available vp choices in device settings dialog.
     DXUTGetD3D9Enumeration()->SetPossibleVertexProcessingList( true, false, false, true );
@@ -728,6 +787,59 @@ void RenderText()
     //txtHelper.DrawTextLine( DXUTGetFrameStats() );
     //txtHelper.DrawTextLine( DXUTGetDeviceStats() );
 
+	//Print on Cat&Mouse win
+	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
+	txtHelper.SetInsertionPos(200, y);
+	txtHelper.DrawFormattedTextLine(L"CATS:             %d                    MOUSE:             %d", catWin,mouseWin);
+
+	//print train time
+	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
+	txtHelper.SetInsertionPos(540, 94);
+	txtHelper.DrawFormattedTextLine(L"LOOP:%d", g_trainloop);
+
+	//print method
+	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
+	txtHelper.SetInsertionPos(515, 149);
+	if (g_useQR)
+		txtHelper.DrawFormattedTextLine(L"Current:Q-Learning");
+	else
+		txtHelper.DrawFormattedTextLine(L"Current:SARSA");
+
+	//print punish and reward
+	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
+	txtHelper.SetInsertionPos(5, 5);
+	txtHelper.DrawFormattedTextLine(L"Punish:%f", g_punish);
+	txtHelper.SetInsertionPos(5, 20);
+	txtHelper.DrawFormattedTextLine(L"Reward:%f", g_reward);
+
+
+	//print speed info
+	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
+	txtHelper.SetInsertionPos(5, 40);
+	switch (g_RLspeed)
+	{
+	case RL_singlestep:
+		txtHelper.DrawFormattedTextLine(L"Speed Level:	Single step");
+		break;
+	case RL_slow:
+		txtHelper.DrawFormattedTextLine(L"Speed Level:	Slow");
+		break;
+	case RL_medium:
+		txtHelper.DrawFormattedTextLine(L"Speed Level:	Medium");
+		break;
+	case RL_fast:
+		txtHelper.DrawFormattedTextLine(L"Speed Level:	Fast");
+		break;
+	case RL_turbo:
+		txtHelper.DrawFormattedTextLine(L"Speed Level:	Turbo");
+		break;
+	default:
+		txtHelper.DrawFormattedTextLine(L"Speed Level:	Single step");
+		break;
+	}
+
+
+	/*
     // Dump out the FPS and device stats
     //txtHelper.SetInsertionPos( 5, 150 );
     //txtHelper.DrawFormattedTextLine( L"  Time: %2.3f", DXUTGetGlobalTimer()->GetTime() );
@@ -817,12 +929,12 @@ void RenderText()
     txtHelper.SetForegroundColor( D3DXCOLOR( 0.0f, 0.0f, 0.0f, 1.0f ) );
 	txtHelper.SetInsertionPos( 5, y+=10 );
 	txtHelper.DrawFormattedTextLine( L"Analysis Time:      %.2f", g_time.GetStopwatchAnalysis() );
-
+	*/
 	// Print out states
     txtHelper.SetForegroundColor( D3DXCOLOR( 1.0f, 0.0f, 0.0f, 1.0f ) );
 	dbCompositionList list;
 	g_database.ComposeList( list, OBJECT_Ignore_Type );
-	int starttext = y+=20;
+	int starttext = y+=60;
 	int count = 0;
 	dbCompositionList::iterator i;
 	for( i=list.begin(); i!=list.end(); ++i )
@@ -1062,7 +1174,8 @@ void CALLBACK OnGUIEvent( UINT nEvent, int nControlID, CDXUTControl* pControl, v
 */
         }
 
-        case IDC_NEXTMAP:
+			
+/*      case IDC_NEXTMAP:
 			g_terrain.NextMap();
 			break;
 
@@ -1230,6 +1343,72 @@ void CALLBACK OnGUIEvent( UINT nEvent, int nControlID, CDXUTControl* pControl, v
             g_terrain.InitFogOfWar();
             g_database.SendMsgFromSystem( MSG_SetFogOfWar, MSG_Data( g_fogOfWarFlag ) );
             break;
+*/
+case IDC_PUNISH:
+	if (g_punish == 0.0f)		{ g_punish = 1.0f; }
+	else if (g_punish == 1.0f)	{ g_punish = 1.2f;}
+	else if (g_punish == 1.2f)	{ g_punish = 1.5f; }
+	else if (g_punish == 1.5f)	{ g_punish = 2.0f; }
+	else						{ g_punish = 0.0f; }
+	g_database.SendMsgFromSystem(MSG_SetPunish, MSG_Data(g_punish));
+	break;
+
+case IDC_REWARD:
+	if (g_reward == 0.0f)		{ g_reward = 1.0f; }
+	else if (g_reward == 1.0f)	{ g_reward = 1.2f; }
+	else if (g_reward == 1.2f)	{ g_reward = 1.5f; }
+	else if (g_reward == 1.5f)	{ g_reward = 2.0f; }
+	else						{ g_reward = 0.0f; }
+	g_database.SendMsgFromSystem(MSG_SetReward, MSG_Data(g_reward));
+	break;
+case IDC_LOOP_1000:
+	g_trainloop = 1000;
+	g_database.SendMsgFromSystem(MSG_SetTrainLoop, MSG_Data(g_trainloop));
+	break;
+case IDC_LOOP_3000:
+	g_trainloop = 3000;
+	g_database.SendMsgFromSystem(MSG_SetTrainLoop, MSG_Data(g_trainloop));
+	break;
+case IDC_LOOP_5000:
+	g_trainloop = 5000;
+	g_database.SendMsgFromSystem(MSG_SetTrainLoop, MSG_Data(g_trainloop));
+	break;
+case IDC_LOOP_10000:
+	g_trainloop = 10000;
+	g_database.SendMsgFromSystem(MSG_SetTrainLoop, MSG_Data(g_trainloop));
+	break;
+case IDC_METHOD_QL:
+	g_useQR = true;
+	g_database.SendMsgFromSystem(MSG_SetMethod_UseQL, MSG_Data(g_useQR));
+	break;
+case IDC_METHOD_SARSA:
+	g_useQR = false;
+	g_database.SendMsgFromSystem(MSG_SetMethod_UseQL, MSG_Data(g_useQR));
+	break;
+case IDC_RESET:
+	break;
+case IDC_START_TRAINING:
+	break;
+case IDC_START_PLAYING:
+	break;
+
+case IDC_SPEED_SINGLESTEP:
+	g_RLspeed = RL_singlestep;
+	break;
+case IDC_SPEED_SLOW:
+	g_RLspeed = RL_slow;
+	break;
+case IDC_SPEED_MEDIUM:
+	g_RLspeed = RL_medium;
+	break;
+case IDC_SPEED_FAST:
+	g_RLspeed = RL_fast;
+	break;
+case IDC_SPEED_TURBO:
+	g_RLspeed = RL_turbo;
+	break;
+
+
     }
 }
 

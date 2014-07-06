@@ -17,6 +17,7 @@ enum Tile
     TILE_WALL = -1,
     TILE_EMPTY,
     TILE_WALL_INVISIBLE,
+	TILE_GOAL
 };
 
 class Map {
