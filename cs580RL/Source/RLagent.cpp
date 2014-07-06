@@ -34,6 +34,12 @@ bool RLAgent::States( State_Machine_Event event, MSG_Object * msg, int state, in
 		ResetStateMachine();
         ChangeState(STATE_Initialize);
 
+    OnMsg(MSG_Teleport)
+        int r = msg->GetVector2Data().x; int c = msg->GetVector2Data().y;
+        D3DXVECTOR3 coords = g_terrain.GetCoordinates(r, c);
+        m_owner->GetBody().SetPos(coords);
+        ChangeState(STATE_Initialize);
+
 #define DEBUG_THE_RL_AGENT
 #ifdef DEBUG_THE_RL_AGENT
     OnMsg(MSG_MouseClick)

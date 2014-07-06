@@ -144,9 +144,6 @@
     </ClCompile>
     <ClCompile Include="Source\MultiAnimation.cpp" />
     <ClCompile Include="Source\MultiAnimationLib.cpp" />
-    <ClCompile Include="Source\RLagent.cpp">
-      <Filter>GameObject\StateMachines</Filter>
-    </ClCompile>
     <ClCompile Include="Source\RLearner.cpp">
       <Filter>ReinforcementLearning</Filter>
     </ClCompile>
@@ -157,6 +154,9 @@
       <Filter>ReinforcementLearning</Filter>
     </ClCompile>
     <ClCompile Include="Source\RLWorld.cpp">
+      <Filter>ReinforcementLearning</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RLagent.cpp">
       <Filter>ReinforcementLearning</Filter>
     </ClCompile>
   </ItemGroup>
@@ -279,9 +279,6 @@
       <Filter>GameEngine\StateMachineLanguage</Filter>
     </ClInclude>
     <ClInclude Include="Source\MultiAnimation.h" />
-    <ClInclude Include="Source\RLagent.h">
-      <Filter>GameObject\StateMachines</Filter>
-    </ClInclude>
     <ClInclude Include="Source\RLearner.h">
       <Filter>ReinforcementLearning</Filter>
     </ClInclude>
@@ -292,6 +289,9 @@
       <Filter>ReinforcementLearning</Filter>
     </ClInclude>
     <ClInclude Include="Source\RLWorld.h">
+      <Filter>ReinforcementLearning</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RLagent.h">
       <Filter>ReinforcementLearning</Filter>
     </ClInclude>
   </ItemGroup>

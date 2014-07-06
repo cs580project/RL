@@ -2,26 +2,33 @@
 #include "RLearner.h"
 
 
-RLearner::RLearner(RLWorld& world) :theWorld(world),policy(6)
+RLearner::RLearner(RLWorld& world) :
+    m_learningWorld(world),
+    m_policy(6)
 {
+
 }
 
 
 RLearner::~RLearner()
 {
+
 }
 
-void RLearner::runEpoch()
+void RLearner::RunEpoch()
 {
-	theWorld.resetState();
-	switch (learningMethod)
+	m_learningWorld.resetState();
+
+	switch (m_learningMethod)
 	{
 	case Q_LEARNING:
 		QLearning();
 		break;
+
 	case SARSA:
 		Sarsa();
 		break;
+
 	case Q_LAMBDA:
 		QLambda();
 		break;
@@ -30,22 +37,32 @@ void RLearner::runEpoch()
 
 void RLearner::QLearning()
 {
-	float thisQ;
-	float maxQ;
-	float newQ;
-	while (!theWorld.endState())
+    if (m_playing)
+    {
+        return;
+    }
+    
+	float thisQ = 0.f;
+	float maxQ  = 0.f;
+	float newQ  = 0.f;
+
+	while (!m_learningWorld.endState())
 	{
-		if (!running) return;
-		vector<int>& state = theWorld.getCurrentState();
-		int action = selectAction(state);
-		vector<int>& newstate = theWorld.getNextState(action);
-		float reward = theWorld.getReward();
+        if (!m_running)
+        {
+            return;
+        }
 
-		thisQ = policy.getQValue(state, action);
-		maxQ = policy.getMaxQValue(newstate);
+		vector<int>&    state       = m_learningWorld.getCurrentState();
+		int             action      = SelectAction(state);
+		vector<int>&    newstate    = m_learningWorld.getNextState(action);
+		float           reward      = m_learningWorld.getReward();
 
-		newQ = thisQ + alpha*(reward + gamma*maxQ - thisQ);
-		policy.setQValue(state, action, newQ);
+		thisQ   = m_policy.getQValue(state, action);
+		maxQ    = m_policy.getMaxQValue(newstate);
+		
+        newQ    = thisQ + m_alpha*(reward + m_gamma*maxQ - thisQ);
+		m_policy.setQValue(state, action, newQ);
 	}
 }
 
@@ -59,32 +76,41 @@ void RLearner::Sarsa()
 
 }
 
-int RLearner::selectAction(vector<int>& state)
+int RLearner::SelectAction(vector<int>& state)
 {
 	int selectedAction = 0;
+
 	switch (selectActionMethod)
 	{
 	case E_GREEDY:
-		selectedAction = policy.getBestAction(state);
+		selectedAction = m_policy.getBestAction(state);
 		break;
-	case SOFTMAX:
+	
+    case SOFTMAX:
 		break;
-	default:
+	
+    default:
 		break;
 	}
+
 	return selectedAction;
 }
 
-void RLearner::runTraining(int epochNum)
+void RLearner::RunTraining(int epochNum)
 {
-	for (int i = 0; i < epochNum; i++) {
-		if (!running) return;
-		runEpoch();
-	}
-}
+    if (m_playing)
+    {
+        return;
+    }
 
-RLPolicy& RLearner::getPolicy()
-{
-	return policy;
+	for (int i = 0; i < epochNum; ++i)
+    {
+        if (!m_running)
+        {
+            return;
+        }
+
+		RunEpoch();
+	}
 }
 
