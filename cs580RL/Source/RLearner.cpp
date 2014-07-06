@@ -4,7 +4,12 @@
 
 RLearner::RLearner(RLWorld& world) :
     m_learningWorld(world),
-    m_policy(6)
+    m_policy(6),
+    m_running(false),
+    m_playing(false),
+    m_alpha(1.0f), // TODO: Make these adjustable, add Epsilon, Lambda.
+    m_gamma(0.1f)
+
 {
 
 }

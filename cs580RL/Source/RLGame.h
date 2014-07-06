@@ -3,6 +3,17 @@
 #include "RLWorld.h"
 #include "RLearner.h"
 
+
+enum RLSpeed
+{
+    SingleStep = 0,
+    Slow,
+    Medium,
+    Fast,
+    Turbo
+};
+
+
 class RLGame : public StateMachine
 {
 

@@ -52,10 +52,11 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
             m_learningMethod = LearningMethod::Q_LEARNING;
             m_iterationsPerFrame = 1;
             m_RLearner.SetRunning(false);
+            ChangeState(STATE_Waiting);
 
 
-        ///////////////////////////////////////////////////////////////
-        DeclareState(STATE_Waiting)
+    ///////////////////////////////////////////////////////////////
+    DeclareState(STATE_Waiting)
 
         OnEnter
             m_RLearner.SetRunning(false);
@@ -77,33 +78,35 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
         // TODO: Integrate the branches
         OnMsg(MSG_SetRLSpeed)
             switch (static_cast<RLSpeed>(msg->GetIntData()))
-        {
-            case RLSpeed::Slow:
-                m_iterationsPerFrame = cSpeedSlow;
-                break;
+            {
+                case RLSpeed::Slow:
+                    m_iterationsPerFrame = cSpeedSlow;
+                    break;
                 
-            case RLSpeed::Medium:
-                m_iterationsPerFrame = cSpeedMedium;
-                break;
+                case RLSpeed::Medium:
+                    m_iterationsPerFrame = cSpeedMedium;
+                    break;
 
-            case RLSpeed::Fast:
-                m_iterationsPerFrame = cSpeedFast;
-                break;
+                case RLSpeed::Fast:
+                    m_iterationsPerFrame = cSpeedFast;
+                    break;
 
-            case RLSpeed::Turbo:
-                m_iterationsPerFrame = cSpeedTurbo;
-                break;
+                case RLSpeed::Turbo:
+                    m_iterationsPerFrame = cSpeedTurbo;
+                    break;
 
-            case RLSpeed::SingleStep:
-            default:
-                m_iterationsPerFrame = cSpeedSingleStep;
-                break;
-        }
+                case RLSpeed::SingleStep:
+                default:
+                    m_iterationsPerFrame = cSpeedSingleStep;
+                    break;
+            }
 
 
-        // TODO: Add MSG_StartLearning
         OnMsg(MSG_StartLearning)
             ChangeState(STATE_Learning);
+
+        OnMsg(MSG_StartPlaying)
+            ChangeState(STATE_Playing);
 
 
 	///////////////////////////////////////////////////////////////

@@ -21,6 +21,7 @@
 #include "database.h"
 #include "terrain.h"
 #include "global.h"
+#include "RLGame.h"
 #pragma warning(default: 4995)
 
 
@@ -30,15 +31,6 @@ using namespace std;
 
 #define TXFILE_FLOOR L"floor.jpg"
 #define FLOOR_TILECOUNT 2
-
-enum RLSpeed
-{
-	RL_singlestep = 0,
-	RL_slow,
-	RL_medium,
-	RL_fast,
-	RL_turbo
-};
 
 //--------------------------------------------------------------------------------------
 // Global variables
@@ -77,11 +69,11 @@ bool					g_aStarUsesAnalysis = false;//Default A* uses analysis
 bool                    g_movementFlag = true;//Agent will move by default
 bool                    g_fogOfWarFlag = false;//Agent has Fog of War disabled by default
 
-float					g_punish = 0.0f;		//Default punishment
-float					g_reward = 0.0f;		//Default reward
-int						g_trainloop = 1000;		//Default loop time
-bool					g_useQR = true;			//Default use Q-Learing
-RLSpeed					g_RLspeed = RL_singlestep;			//Default speed(single step)
+float					g_punish        = 0.0f;		            //Default punishment
+float					g_reward        = 0.0f;		            //Default reward
+int						g_trainloop     = 1000;		            //Default loop time
+bool					g_useQR         = true;			        //Default use Q-Learing
+RLSpeed					g_RLspeed       = RLSpeed::SingleStep;  //Default speed(single step)
 
 unsigned int			catWin = 0;				
 unsigned int			mouseWin = 0;
@@ -818,21 +810,19 @@ void RenderText()
 	txtHelper.SetInsertionPos(5, 40);
 	switch (g_RLspeed)
 	{
-	case RL_singlestep:
-		txtHelper.DrawFormattedTextLine(L"Speed Level:	Single step");
-		break;
-	case RL_slow:
+    case RLSpeed::Slow:
 		txtHelper.DrawFormattedTextLine(L"Speed Level:	Slow");
 		break;
-	case RL_medium:
+    case RLSpeed::Medium:
 		txtHelper.DrawFormattedTextLine(L"Speed Level:	Medium");
 		break;
-	case RL_fast:
+    case RLSpeed::Fast:
 		txtHelper.DrawFormattedTextLine(L"Speed Level:	Fast");
 		break;
-	case RL_turbo:
+    case RLSpeed::Turbo:
 		txtHelper.DrawFormattedTextLine(L"Speed Level:	Turbo");
-		break;
+        break;
+    case RLSpeed::SingleStep:
 	default:
 		txtHelper.DrawFormattedTextLine(L"Speed Level:	Single step");
 		break;
@@ -1386,26 +1376,29 @@ case IDC_METHOD_SARSA:
 	g_database.SendMsgFromSystem(MSG_SetMethod_UseQL, MSG_Data(g_useQR));
 	break;
 case IDC_RESET:
+    // TODO: Add stop/reset capability
 	break;
 case IDC_START_TRAINING:
+    g_database.SendMsgFromSystem(MSG_StartLearning, MSG_Data(g_useQR));
 	break;
 case IDC_START_PLAYING:
+    g_database.SendMsgFromSystem(MSG_StartPlaying, MSG_Data(g_useQR));
 	break;
 
 case IDC_SPEED_SINGLESTEP:
-	g_RLspeed = RL_singlestep;
+    g_RLspeed = RLSpeed::SingleStep;
 	break;
 case IDC_SPEED_SLOW:
-	g_RLspeed = RL_slow;
+    g_RLspeed = RLSpeed::Slow;
 	break;
 case IDC_SPEED_MEDIUM:
-	g_RLspeed = RL_medium;
+    g_RLspeed = RLSpeed::Medium;
 	break;
 case IDC_SPEED_FAST:
-	g_RLspeed = RL_fast;
+    g_RLspeed = RLSpeed::Fast;
 	break;
 case IDC_SPEED_TURBO:
-	g_RLspeed = RL_turbo;
+	g_RLspeed = RLSpeed::Turbo;
 	break;
 
 
