@@ -14,10 +14,13 @@ RLWorld::RLWorld()
 
 RLWorld::~RLWorld()
 {
-	for (int i = 0; i < mapWidth; i++)
-		delete currentMap[i];
+	if (currentMap)
+	{
+		//for (int i = 0; i < mapWidth; i++)
+		//	delete currentMap[i];
 
-	delete[] currentMap;
+		//delete[] currentMap;
+	}
 }
 
 float RLWorld::getReward()
@@ -57,11 +60,11 @@ vector<int>& RLWorld::getNextState(int action)
 	waitingReward = calcReward();
 
 	// if mouse has cheese, relocate cheese
-	/*if ((mx == chx) && (my == chy)) {
-	d = getRandomPos();
-	chx = d.width;
-	chy = d.height;
-	}*/
+	if ((mx == chx) && (my == chy)) {
+	Pos d = getRandomPos();
+	chx = d.x;
+	chy = d.y;
+	}
 
 	/*// if cat has mouse, relocate mouse
 	if ((mx==cx) && (my==cy)) {
@@ -77,7 +80,7 @@ void RLWorld::resetState()
 {
 	catScores = 0;
 	mouseScores = 0;
-	waitingReward = calcReward();
+	waitingReward = 0;
 	setRandomPos();
 }
 
@@ -94,7 +97,7 @@ bool RLWorld::endState()
 
 double RLWorld::calcReward()
 {
-	double newReward = 0;
+	float newReward = 0;
 	if ((mx == chx) && (my == chy))
 	{
 		mouseScores++;
@@ -211,13 +214,13 @@ void RLWorld::setRandomPos()
 
 void RLWorld::InitialValue()
 {
-	vector<int> stateArray;
+	//vector<int> stateArray;
 
 	for (int i = 0; i < 6; i++)
 		stateArray.push_back(-1);
 
-	currentReward = 0;
-	currentPunish = 0;
+	currentReward = 50;
+	currentPunish = 100;
 }
 
 Pos RLWorld::getCoords(int action)

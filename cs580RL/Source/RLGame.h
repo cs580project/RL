@@ -19,7 +19,9 @@ class RLGame : public StateMachine
 
 public:
 	RLGame(GameObject & object)
-		: StateMachine(object) {}
+		: StateMachine(object) {
+		init();
+	}
 	~RLGame(){}
 
 	void init();

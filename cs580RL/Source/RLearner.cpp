@@ -4,11 +4,13 @@
 
 RLearner::RLearner(RLWorld& world) :
     m_learningWorld(world),
-    m_policy(6),
+    m_policy(8),
     m_running(false),
     m_playing(false),
     m_alpha(1.0f), // TODO: Make these adjustable, add Epsilon, Lambda.
-    m_gamma(0.1f)
+    m_gamma(0.1f),
+	m_learningMethod(Q_LEARNING),
+	selectActionMethod(E_GREEDY)
 
 {
 
@@ -64,6 +66,8 @@ void RLearner::QLearning()
 		float           reward      = m_learningWorld.getReward();
 
 		thisQ   = m_policy.getQValue(state, action);
+		if (reward != 0)
+			reward = reward;
 		maxQ    = m_policy.getMaxQValue(newstate);
 		
         newQ    = thisQ + m_alpha*(reward + m_gamma*maxQ - thisQ);

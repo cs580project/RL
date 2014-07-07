@@ -4,6 +4,7 @@ using namespace std;
 
 struct Pos
 {
+	Pos():x(0),y(0){ }
 	int x, y;
 };
 
@@ -31,7 +32,7 @@ private:
 	int cx, cy; //coord for cat
 	int chx, chy;	// coord for cheese
 	int catScores, mouseScores;	//keep the score
-	double waitingReward;
+	float waitingReward;
 	float currentReward, currentPunish;
 	int** currentMap;	//map info
 	int mapWidth;
