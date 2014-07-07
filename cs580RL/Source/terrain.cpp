@@ -24,7 +24,7 @@ Terrain::Terrain( void )
   m_analysis(TerrainAnalysis_None),
   m_width(40)
 {
-    m_maps.push_back(Map(m_width));
+    //m_maps.push_back(Map(m_width));
 }
 
 Terrain::~Terrain()
@@ -35,7 +35,7 @@ Terrain::~Terrain()
 
 void Terrain::Create( void )
 {
-	NextMap();
+	
 
 	// Create new maps from Maps directory
 	WCHAR pathBuffer[MAX_PATH];
@@ -59,6 +59,7 @@ void Terrain::Create( void )
 	while (FindNextFile(h, &file));
 
 	FindClose(h);
+	NextMap();
 }
 
 void Terrain::NextMap( void )

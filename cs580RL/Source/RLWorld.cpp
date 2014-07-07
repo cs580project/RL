@@ -115,7 +115,7 @@ double RLWorld::calcReward()
 
 bool RLWorld::isWall(int a, int b)
 {
-	if (a < 0 || b < 0 || a >= mapWidth || b >= mapWidth) return true;
+	if (a < 0 || b < 0 || a >= g_terrain.GetWidth() || b >= g_terrain.GetWidth()) return true;
 
 	bool returnVal = g_terrain.IsWall(a, b);
 
@@ -129,8 +129,8 @@ Pos RLWorld::getRandomPos()
 
 	while (true)
 	{
-		nPos.x = (int)(rand() % mapWidth);
-		nPos.y = (int)(rand() % mapWidth);
+		nPos.x = (int)(rand() % g_terrain.GetWidth());
+		nPos.y = (int)(rand() % g_terrain.GetWidth());
 
 		if (!isWall(nPos.x, nPos.y)) return nPos;
 	}
@@ -181,10 +181,10 @@ void RLWorld::loadMapInfo()
 {
 	mapWidth = g_terrain.GetWidth();
 
-	currentMap = new int*[mapWidth];
+	//currentMap = new int*[mapWidth];
 
-	for (int i = 0; i < mapWidth; i++)
-		currentMap[i] = new int[mapWidth];
+	//for (int i = 0; i < mapWidth; i++)
+	//	currentMap[i] = new int[mapWidth];
 }
 
 void RLWorld::setRandomPos()

@@ -1341,6 +1341,7 @@ case IDC_PUNISH:
 	else if (g_punish == 1.5f)	{ g_punish = 2.0f; }
 	else						{ g_punish = 0.0f; }
 	g_database.SendMsgFromSystem(MSG_SetPunish, MSG_Data(g_punish));
+	g_terrain.NextMap();
 	break;
 
 case IDC_REWARD:
