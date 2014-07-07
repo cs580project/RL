@@ -4,7 +4,8 @@ using namespace std;
 
 struct Pos
 {
-	Pos():x(0),y(0){ }
+	Pos() :x(0), y(0){ }
+	Pos(int _x, int _y) :x(_x), y(_y){ }
 	int x, y;
 };
 

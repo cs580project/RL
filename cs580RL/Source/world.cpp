@@ -38,14 +38,14 @@
 #include "unittest4.h"
 #include "unittest5.h"
 #include "unittest6.h"
-
+#include <time.h> 
 //#define UNIT_TESTING
 
 
 World::World(void)
 : m_initialized(false)
 {
-
+	srand(time(NULL));
 }
 
 World::~World(void)

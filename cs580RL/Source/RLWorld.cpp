@@ -154,7 +154,7 @@ void RLWorld::moveMouse()
 
 Pos RLWorld::moveToNewPos(int currentx, int currenty, int targetx, int targety)
 {
-	Pos nPos;
+	Pos nPos(currentx, currenty);
 
 	if (targetx == currentx) nPos.x = currentx;
 	else nPos.x += (targetx - currentx) / abs(targetx - currentx); // +/- 1 or 0

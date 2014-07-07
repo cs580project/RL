@@ -18,7 +18,7 @@ vector<float>& RLPolicy::getQValues(vector<int> state)
 
 void RLPolicy::setQValue(vector<int> state, int action, float qvalue)
 {
-	if (qValueTable.count(state) == 0 && qvalue == 0)
+	if (qValueTable.count(state) == 0 && abs(qvalue) <0.00001f)
 		return;
 	vector<float>& qvalues = qValueTable[state];
 	if (qvalues.size() == 0)
