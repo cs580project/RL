@@ -120,7 +120,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
             m_RLearner.SetRunning(true);
             iterations = 0;
 			m_RLearner.getWorld().resetGame();
-			m_RLearner.RunTraining(1000);
+			m_RLearner.RunTraining(2000);
 			m_RLearner.SetRunning(false);
 			ChangeState(STATE_Waiting);
 			g_catWin = m_RLearner.getWorld().catScores;
