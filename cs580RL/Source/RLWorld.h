@@ -26,7 +26,7 @@ public:
 	void            ResetGame();
 	bool            ValidAction(int action);	//check if the action is legal
     bool            EndState();
-    void            DrawState();
+    void            DrawRLState(bool teleport);
 
 	void SetRewardVal(float reward) { currentReward = reward; }
 	void SetPunishVal(float punish) { currentPunish = punish; }

@@ -18,13 +18,8 @@ class RLGame : public StateMachine
 {
 
 public:
-	RLGame(GameObject & object)
-		: StateMachine(object) {
-		init();
-	}
+    RLGame(GameObject & object);
 	~RLGame(){}
-
-	void init();
 
 private:
     virtual bool States(State_Machine_Event event, MSG_Object * msg, int state, int substate);

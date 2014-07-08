@@ -18,7 +18,7 @@ enum SelectActionMethod
 class RLearner
 {
 public:
-    RLearner() { };
+    //RLearner() { };
 	RLearner(RLWorld& world);
 	~RLearner();
 
@@ -40,7 +40,7 @@ private:
     void                QLambda();
 
 	RLPolicy            m_policy;
-	RLWorld             m_learningWorld;
+	RLWorld&            m_learningWorld;
 	vector<int>         m_currentState;
 	LearningMethod      m_learningMethod;
 	SelectActionMethod  selectActionMethod;

@@ -315,14 +315,20 @@ Pos RLWorld::GetCoords(int action)
 	return nPos;
 }
 
-void RLWorld::DrawState()
+void RLWorld::DrawRLState(bool teleport)
 {
-	//g_database.SendMsgFromSystem(MSG_Teleport, MSG_Data(D3DXVECTOR2(mx, my)));
-    g_database.SendMsgFromSystem(10, MSG_Teleport, MSG_Data(D3DXVECTOR2(static_cast<float>(mx), static_cast<float>(my))));
-    g_database.SendMsgFromSystem(11, MSG_Teleport, MSG_Data(D3DXVECTOR2(static_cast<float>(cx), static_cast<float>(cy))));
+    if (teleport)
+    {
+        //g_database.SendMsgFromSystem(MSG_Teleport, MSG_Data(D3DXVECTOR2(mx, my)));
+        g_database.SendMsgFromSystem(10, MSG_Teleport, MSG_Data(D3DXVECTOR2(static_cast<float>(mx), static_cast<float>(my))));
+        g_database.SendMsgFromSystem(11, MSG_Teleport, MSG_Data(D3DXVECTOR2(static_cast<float>(cx), static_cast<float>(cy))));
+    }
+    else
+    {
+        g_database.SendMsgFromSystem(10, MSG_AddNewWaypoint, MSG_Data(D3DXVECTOR2(static_cast<float>(mx), static_cast<float>(my))));
+        g_database.SendMsgFromSystem(11, MSG_AddNewWaypoint, MSG_Data(D3DXVECTOR2(static_cast<float>(cx), static_cast<float>(cy))));
+    }
 
-	//Sleep(200);
-	
     g_terrain.ResetColors();
 	g_terrain.SetColor(chx,chy, DEBUG_COLOR_BLUE);
 }

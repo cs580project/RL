@@ -39,14 +39,14 @@ bool RLAgent::States( State_Machine_Event event, MSG_Object * msg, int state, in
 	    int c = msg->GetVector2Data().y;
         D3DXVECTOR3 coords = g_terrain.GetCoordinates(r, c);
         m_owner->GetBody().SetPos(coords);
-        ChangeState(STATE_Initialize);
 
-#define DEBUG_THE_RL_AGENT
+// #define DEBUG_THE_RL_AGENT
 #ifdef DEBUG_THE_RL_AGENT
+        // TODO: Before making this player input code, check for IsWall
     OnMsg(MSG_MouseClick)
         int r = 0; int c = 0;
         g_terrain.GetRowColumn(&msg->GetVector3Data(), &r, &c);
-        MSG_Data data(D3DXVECTOR3(r, 0, c));
+        MSG_Data data(D3DXVECTOR2(r, c));
         SendMsgToStateMachine(MSG_AddNewWaypoint, data);
 #endif
 
@@ -65,7 +65,9 @@ bool RLAgent::States( State_Machine_Event event, MSG_Object * msg, int state, in
             m_owner->GetMovement().SetIdleSpeed();
 
         OnMsg(MSG_AddNewWaypoint)
-            m_owner->GetMovement().AddToPath(msg->GetVector3Data().x, msg->GetVector3Data().z);
+            int r = msg->GetVector2Data().x; 
+	        int c = msg->GetVector2Data().y;
+            m_owner->GetMovement().AddToPath(r, c);
             ChangeState(STATE_Moving);
 
 
@@ -76,7 +78,9 @@ bool RLAgent::States( State_Machine_Event event, MSG_Object * msg, int state, in
             m_owner->GetMovement().SetWalkSpeed();
 
         OnMsg(MSG_AddNewWaypoint)
-            m_owner->GetMovement().AddToPath(msg->GetVector3Data().x, msg->GetVector3Data().z);
+            int r = msg->GetVector2Data().x; 
+	        int c = msg->GetVector2Data().y;
+            m_owner->GetMovement().AddToPath(r, c);
 
         OnMsg(MSG_Arrived)
             ChangeState(STATE_Listening);

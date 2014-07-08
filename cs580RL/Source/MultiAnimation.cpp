@@ -1388,18 +1388,23 @@ case IDC_START_PLAYING:
 
 case IDC_SPEED_SINGLESTEP:
     g_RLspeed = RLSpeed::SingleStep;
+    g_database.SendMsgFromSystem(MSG_SetRLSpeed, MSG_Data(g_RLspeed));
 	break;
 case IDC_SPEED_SLOW:
     g_RLspeed = RLSpeed::Slow;
+    g_database.SendMsgFromSystem(MSG_SetRLSpeed, MSG_Data(g_RLspeed));
 	break;
 case IDC_SPEED_MEDIUM:
     g_RLspeed = RLSpeed::Medium;
+    g_database.SendMsgFromSystem(MSG_SetRLSpeed, MSG_Data(g_RLspeed));
 	break;
 case IDC_SPEED_FAST:
     g_RLspeed = RLSpeed::Fast;
+    g_database.SendMsgFromSystem(MSG_SetRLSpeed, MSG_Data(g_RLspeed));
 	break;
 case IDC_SPEED_TURBO:
-	g_RLspeed = RLSpeed::Turbo;
+    g_RLspeed = RLSpeed::Turbo;
+    g_database.SendMsgFromSystem(MSG_SetRLSpeed, MSG_Data(g_RLspeed));
 	break;
 
 
