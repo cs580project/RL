@@ -15,46 +15,44 @@ public:
 	RLWorld();
 	~RLWorld();
 
-	vector<int> stateArray;
+    // TODO: Make these private.
+    vector<int> stateArray;
+    int catScores, mouseScores;	//keep the score
 
-	float getReward();
-	vector<int>& getNextState(int action);
-	vector<int>& getCurrentState();
-	void resetState();
-	void resetGame();
-	bool validAction(int action);	//check if the action is legal
-	bool endState();
+	float           GetReward();
+	vector<int>&    GetNextState(int action);
+	vector<int>&    GetCurrentState();
+	void            ResetState();
+	void            ResetGame();
+	bool            ValidAction(int action);	//check if the action is legal
+    bool            EndState();
+    void            DrawState();
 
-	void setRewardVal(float reward) { currentReward = reward; }
-	void setPunishVal(float punish) { currentPunish = punish; }
-	void drawState();
-	int catScores, mouseScores;	//keep the score
+	void SetRewardVal(float reward) { currentReward = reward; }
+	void SetPunishVal(float punish) { currentPunish = punish; }
 
 private:
+    void    InitialValue();
+    void    LoadMapInfo();
+    float   CalcReward();	    //calculate reward(waiting reward)
+    bool    IsWall(int a, int b);
+    Pos     MoveToNewPos(int currentx, int currenty, int targetx, int targety);
+    Pos     GetCoords(int action);
+    Pos     GetRandomPos();
+    void    SetRandomPos();
+    void    MoveMouse();	    //no learning
+    void    MoveCat();
+
 	vector<int> currentState;	//include coords for mouse,cat,cheese
-	int mx, my;	//coordinates for mouse
-	int cx, cy; //coord for cat
-	int chx, chy;	// coord for cheese
-	
-	float waitingReward;
-	float currentReward, currentPunish;
-	int** currentMap;	//map info
-	int mapWidth;
 
-	void loadMapInfo();
-	double calcReward();	//calculate reward(waiting reward)
+	int     mx, my;	            //coordinates for mouse
+	int     cx, cy;             //coord for cat
+	int     chx, chy;	        // coord for cheese
 
-	bool isWall(int a, int b);
+    int**   currentMap;	        //map info
+    int     mapWidth;
 
-	Pos getRandomPos();
-	void setRandomPos();
-
-	void moveMouse();	//no learning
-	void moveCat();
-
-	void InitialValue();
-	Pos moveToNewPos(int currentx, int currenty, int targetx, int targety);
-
-	Pos getCoords(int action);
+	float   waitingReward;
+	float   currentReward, currentPunish;
 };
 

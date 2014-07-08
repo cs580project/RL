@@ -119,7 +119,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
         OnEnter
             m_RLearner.SetRunning(true);
             iterations = 0;
-			m_RLearner.getWorld().resetGame();
+			m_RLearner.getWorld().ResetGame();
 			m_RLearner.RunTraining(2000);
 			m_RLearner.SetRunning(false);
 			ChangeState(STATE_Waiting);
@@ -151,22 +151,22 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
 		DeclareState(STATE_Playing)
 
 		OnEnter
-				//m_RLearner.SetRunning(false);
-				//m_RLearner.SetPlaying(true);
-			m_learningWorld.resetState();
+			//m_RLearner.SetRunning(false);
+			//m_RLearner.SetPlaying(true);
+			m_learningWorld.ResetState();
             // TODO: Reset to starting positions
 
-		OnPeriodicTimeInState(0.5)
-		if (!m_learningWorld.endState())
-		{
-			int   action = m_RLearner.SelectAction(m_learningWorld.getCurrentState());
-			m_learningWorld.getNextState(action);
-			m_learningWorld.drawState();
-		}
-		else
-		{
-			ChangeState(STATE_Waiting);
-		}
+		    OnPeriodicTimeInState(0.5)
+		    if (!m_learningWorld.EndState())
+		    {
+			    int   action = m_RLearner.SelectAction(m_learningWorld.GetCurrentState());
+			    m_learningWorld.GetNextState(action);
+			    m_learningWorld.DrawState();
+		    }
+		    else
+		    {
+			    ChangeState(STATE_Waiting);
+		    }
             // TODO: Update each frame based on policy
 
 

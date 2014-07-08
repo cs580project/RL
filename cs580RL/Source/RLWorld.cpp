@@ -8,10 +8,9 @@
 RLWorld::RLWorld()
 {
 	InitialValue();
-	loadMapInfo();
-	resetState();
+	LoadMapInfo();
+	ResetState();
 }
-
 
 RLWorld::~RLWorld()
 {
@@ -24,13 +23,12 @@ RLWorld::~RLWorld()
 	}
 }
 
-float RLWorld::getReward()
+float RLWorld::GetReward()
 {
 	return waitingReward;
 }
 
-
-vector<int>& RLWorld::getCurrentState()
+vector<int>& RLWorld::GetCurrentState()
 {
 	stateArray[0] = mx;
 	stateArray[1] = my;
@@ -42,12 +40,13 @@ vector<int>& RLWorld::getCurrentState()
 	return stateArray;
 }
 
-vector<int>& RLWorld::getNextState(int action)
+vector<int>& RLWorld::GetNextState(int action)
 {
 	// action is mouse action:  0=u 1=ur 2=r 3=dr ... 7=ul
-	Pos nPos = getCoords(action);
+	Pos nPos = GetCoords(action);
 
-	if (!isWall(nPos.x, nPos.y)) {
+	if (!IsWall(nPos.x, nPos.y))
+    {
 		// move agent
 		mx = nPos.x;
 		my = nPos.y;
@@ -56,15 +55,19 @@ vector<int>& RLWorld::getNextState(int action)
 	{
 		//illegal action, do something
 	}
+
 	// update world
-	moveCat();
-	waitingReward = calcReward();
+	MoveCat();
+	
+    // calculate reward
+    waitingReward = CalcReward();
 
 	// if mouse has cheese, relocate cheese
-	if ((mx == chx) && (my == chy)) {
-	Pos d = getRandomPos();
-	chx = d.x;
-	chy = d.y;
+	if ((mx == chx) && (my == chy))
+    {
+	    Pos d = GetRandomPos();
+	    chx = d.x;
+	    chy = d.y;
 	}
 
 	/*// if cat has mouse, relocate mouse
@@ -74,34 +77,38 @@ vector<int>& RLWorld::getNextState(int action)
 	my = d.height;
 	}*/
 
-	return getCurrentState();
+	return GetCurrentState();
 }
 
-void RLWorld::resetState()
+void RLWorld::ResetState()
 {
 	waitingReward = 0;
-	setRandomPos();
+	SetRandomPos();
 }
 
-void RLWorld::resetGame()
+void RLWorld::ResetGame()
 {
-	catScores = 0;
+	catScores   = 0;
 	mouseScores = 0;
 }
-bool RLWorld::validAction(int action)
+bool RLWorld::ValidAction(int action)
 {
-	Pos nPos = getCoords(action);
-	return !isWall(nPos.x, nPos.y);
+    Pos nPos;
+    
+    nPos = GetCoords(action);
+
+    return (!IsWall(nPos.x, nPos.y));
 }
 
-bool RLWorld::endState()
+bool RLWorld::EndState()
 {
 	return ((cx == mx) && (cy == my));
 }
 
-double RLWorld::calcReward()
+float RLWorld::CalcReward()
 {
 	float newReward = 0;
+
 	if ((mx == chx) && (my == chy))
 	{
 		mouseScores++;
@@ -117,18 +124,21 @@ double RLWorld::calcReward()
 	return newReward;
 }
 
-bool RLWorld::isWall(int a, int b)
+bool RLWorld::IsWall(int a, int b)
 {
-	if (a < 0 || b < 0 || a >= g_terrain.GetWidth() || b >= g_terrain.GetWidth()) return true;
+    if ((a < 0) || (b < 0) ||
+        (a >= g_terrain.GetWidth()) || (b >= g_terrain.GetWidth()))
+    {
+        return true;
+    }
 
 	bool returnVal = g_terrain.IsWall(a, b);
 
 	return returnVal;
 }
 
-Pos RLWorld::getRandomPos()
+Pos RLWorld::GetRandomPos()
 {
-
 	Pos nPos;
 
 	while (true)
@@ -136,52 +146,90 @@ Pos RLWorld::getRandomPos()
 		nPos.x = (int)(rand() % g_terrain.GetWidth());
 		nPos.y = (int)(rand() % g_terrain.GetWidth());
 
-		if (!isWall(nPos.x, nPos.y)) return nPos;
+        if (!IsWall(nPos.x, nPos.y))
+        {
+            return nPos;
+        }
 	}
 }
 
-void RLWorld::moveCat()
+void RLWorld::MoveCat()
 {
 	Pos nPos;
-	nPos = moveToNewPos(cx, cy, mx, my);
-	cx = nPos.x;
-	cy = nPos.y;
+
+	nPos    = MoveToNewPos(cx, cy, mx, my);
+	cx      = nPos.x;
+	cy      = nPos.y;
 }
 
-void RLWorld::moveMouse()
+void RLWorld::MoveMouse()
 {
 	Pos nPos;
-	nPos = moveToNewPos(mx, my, chx, chy);
-	mx = nPos.x;
-	my = nPos.y;
+
+	nPos    = MoveToNewPos(mx, my, chx, chy);
+	mx      = nPos.x;
+	my      = nPos.y;
 }
 
-Pos RLWorld::moveToNewPos(int currentx, int currenty, int targetx, int targety)
+Pos RLWorld::MoveToNewPos(int currentx, int currenty, int targetx, int targety)
 {
 	Pos nPos(currentx, currenty);
 
-	if (targetx == currentx) nPos.x = currentx;
-	else nPos.x += (targetx - currentx) / abs(targetx - currentx); // +/- 1 or 0
-	if (targety == currenty) nPos.y = currenty;
-	else nPos.y += (targety - currenty) / abs(targety - currenty); // +/- 1 or 0
+    if (targetx == currentx)
+    {
+        nPos.x = currentx;
+    }
+    else
+    {
+        nPos.x += (targetx - currentx) / abs(targetx - currentx); // +/- 1 or 0
+    }
+
+    if (targety == currenty)
+    {
+        nPos.y = currenty;
+    }
+    else
+    {
+        nPos.y += (targety - currenty) / abs(targety - currenty); // +/- 1 or 0
+    }
 
 	// check if move legal	
-	if (!isWall(nPos.x, nPos.y)) return nPos;
+    if (!IsWall(nPos.x, nPos.y))
+    {
+        return nPos;
+    }
 
 	// not legal, make random move
-	while (true)
+    static const int maxRandom = 20000;
+    int limit = 0;
+	while (limit < maxRandom)
 	{
 		nPos.x = currentx;
 		nPos.y = currenty;
 
-		nPos.x += 1 - (int)(rand() % 3);		//get a random position then
+        // get a random movement from current position
+		nPos.x += 1 - (int)(rand() % 3);
 		nPos.y += 1 - (int)(rand() % 3);
 
-		if (!isWall(nPos.x, nPos.y)) return nPos;
+        // then check to see if it's valid
+        if (!IsWall(nPos.x, nPos.y))
+        {
+            return nPos;
+        }
+        else
+        {
+            ++limit;
+        }
 	}
+
+    // randomization failed
+    nPos.x = currentx;
+    nPos.y = currenty;
+
+    return nPos;
 }
 
-void RLWorld::loadMapInfo()
+void RLWorld::LoadMapInfo()
 {
 	mapWidth = g_terrain.GetWidth();
 
@@ -191,25 +239,38 @@ void RLWorld::loadMapInfo()
 	//	currentMap[i] = new int[mapWidth];
 }
 
-void RLWorld::setRandomPos()
+void RLWorld::SetRandomPos()
 {
-	Pos nPos = getRandomPos();
-	cx = nPos.x;
-	cy = nPos.y;
+    Pos nPos;
+    
+    nPos    = GetRandomPos();
+	cx      = nPos.x;
+	cy      = nPos.y;
 
-	while (true)
+    static const int maxRandom = 20000;
+    int limit = 0;
+    while (limit < maxRandom)
 	{
-		nPos = getRandomPos();
-		if (nPos.x != cx || nPos.y != cy) break;
+		nPos = GetRandomPos();
+		
+        if ((nPos.x != cx) || (nPos.y != cy))
+        {
+            break;
+        }
 	}
 
 	mx = nPos.x;
 	my = nPos.y;
 
-	while (true)
+    limit = 0;
+    while (limit < maxRandom)
 	{
-		nPos = getRandomPos();
-		if ((nPos.x != cx || nPos.y != cy) && (nPos.x != mx || nPos.y != my)) break;
+		nPos = GetRandomPos();
+
+        if ((nPos.x != cx || nPos.y != cy) && (nPos.x != mx || nPos.y != my))
+        {
+            break;
+        }
 	}
 
 	chx = nPos.x;
@@ -220,44 +281,49 @@ void RLWorld::InitialValue()
 {
 	//vector<int> stateArray;
 
-	for (int i = 0; i < 6; i++)
-		stateArray.push_back(-1);
+    for (int i = 0; i < 6; ++i)
+    {
+        stateArray.push_back(-1);
+    }
 
-	currentReward = 50;
-	currentPunish = 10;
-	catScores = 0;
-	mouseScores = 0;
+	currentReward   = 50;
+	currentPunish   = 10;
+	catScores       = 0;
+	mouseScores     = 0;
 }
 
-Pos RLWorld::getCoords(int action)
+Pos RLWorld::GetCoords(int action)
 {
 	Pos nPos;
+
 	nPos.x = mx;
 	nPos.y = my;
 
-	switch (action) {
-	case 0: nPos.y = my - 1; break;							//go S
-	case 1: nPos.y = my - 1; nPos.x = mx + 1; break;		//go SE
-	case 2: nPos.x = mx + 1; break;							//go E
-	case 3: nPos.y = my + 1; nPos.x = mx + 1; break;		//go NE
-	case 4: nPos.y = my + 1; break;							//go N
-	case 5: nPos.y = my + 1; nPos.x = mx - 1; break;		//go NW
-	case 6: nPos.x = mx - 1; break;							//go W
-	case 7: nPos.y = my - 1; nPos.x = mx - 1; break;		//go SW
-	default:
-		break;
+	switch (action)
+    {
+	    case 0:     nPos.y = my - 1; break;							//go S
+	    case 1:     nPos.y = my - 1; nPos.x = mx + 1; break;		//go SE
+	    case 2:     nPos.x = mx + 1; break;							//go E
+	    case 3:     nPos.y = my + 1; nPos.x = mx + 1; break;		//go NE
+	    case 4:     nPos.y = my + 1; break;							//go N
+	    case 5:     nPos.y = my + 1; nPos.x = mx - 1; break;		//go NW
+	    case 6:     nPos.x = mx - 1; break;							//go W
+	    case 7:     nPos.y = my - 1; nPos.x = mx - 1; break;		//go SW
+	    default:    break;
 	}
+
 	return nPos;
 }
 
-void RLWorld::drawState()
+void RLWorld::DrawState()
 {
 	//g_database.SendMsgFromSystem(MSG_Teleport, MSG_Data(D3DXVECTOR2(mx, my)));
-	g_database.SendMsgFromSystem(10, MSG_Teleport, MSG_Data(D3DXVECTOR2(mx, my)));
-	g_database.SendMsgFromSystem(11, MSG_Teleport, MSG_Data(D3DXVECTOR2(cx, cy)));
+    g_database.SendMsgFromSystem(10, MSG_Teleport, MSG_Data(D3DXVECTOR2(static_cast<float>(mx), static_cast<float>(my))));
+    g_database.SendMsgFromSystem(11, MSG_Teleport, MSG_Data(D3DXVECTOR2(static_cast<float>(cx), static_cast<float>(cy))));
+
 	//Sleep(200);
-	;
-	g_terrain.ResetColors();
+	
+    g_terrain.ResetColors();
 	g_terrain.SetColor(chx,chy, DEBUG_COLOR_BLUE);
 }
 

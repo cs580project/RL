@@ -11,7 +11,6 @@ RLearner::RLearner(RLWorld& world) :
     m_gamma(0.1f),
 	m_learningMethod(Q_LEARNING),
 	selectActionMethod(E_GREEDY)
-
 {
 
 }
@@ -24,7 +23,7 @@ RLearner::~RLearner()
 
 void RLearner::RunEpoch()
 {
-	m_learningWorld.resetState();
+	m_learningWorld.ResetState();
 
 	switch (m_learningMethod)
 	{
@@ -53,24 +52,27 @@ void RLearner::QLearning()
 	float maxQ  = 0.f;
 	float newQ  = 0.f;
 
-	while (!m_learningWorld.endState())
+	while (!m_learningWorld.EndState())
 	{
         if (!m_running)
         {
             return;
         }
 
-		vector<int>    state       = m_learningWorld.getCurrentState();
+		vector<int>     state       = m_learningWorld.GetCurrentState();
 		int             action      = SelectAction(state);
-		vector<int>&    newstate    = m_learningWorld.getNextState(action);
-		float           reward      = m_learningWorld.getReward();
+		vector<int>&    newstate    = m_learningWorld.GetNextState(action);
+		float           reward      = m_learningWorld.GetReward();
 
 		thisQ   = m_policy.getQValue(state, action);
-		if (reward != 0)
-			reward = reward;
+        
+        if (reward != 0)
+        {
+            reward = reward;
+        }
+
 		maxQ    = m_policy.getMaxQValue(newstate);
-		
-        newQ    = thisQ + m_alpha*(reward + m_gamma*maxQ - thisQ);
+		newQ    = thisQ + m_alpha*(reward + m_gamma*maxQ - thisQ);
 		m_policy.setQValue(state, action, newQ);
 	}
 }
