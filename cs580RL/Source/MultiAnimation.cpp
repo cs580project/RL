@@ -1460,6 +1460,6 @@ void CALLBACK OnDestroyDevice( void* pUserContext )
     SAFE_RELEASE( g_pTxFloor );
     SAFE_RELEASE( g_pMeshFloor );
 
-	delete g_pWorld;
-
+	//delete g_pWorld;
+    g_pWorld->InvalidateDeviceObjects();
 }

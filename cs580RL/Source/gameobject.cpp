@@ -148,6 +148,9 @@ void GameObject::RestoreDeviceObjects( LPDIRECT3DDEVICE9 pd3dDevice )
 
 void GameObject::InvalidateDeviceObjects( void )
 {
-
+    if (m_tiny)
+    {
+        m_tiny->InvalidateDeviceObjects();
+    }
 }
 

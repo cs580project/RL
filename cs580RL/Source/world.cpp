@@ -210,4 +210,5 @@ void World::RestoreDeviceObjects( LPDIRECT3DDEVICE9 pd3dDevice )
 void World::InvalidateDeviceObjects( void )
 {
 	g_database.InvalidateDeviceObjects();
+    g_debugdrawing.OnLostDevice();
 }
