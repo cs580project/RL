@@ -6,7 +6,7 @@
 
 enum RLSpeed
 {
-    SingleStep = 0,
+    SuperSlow = 0,
     Slow,
     Medium,
     Fast,

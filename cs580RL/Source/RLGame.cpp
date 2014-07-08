@@ -3,14 +3,14 @@
 #include "database.h"
 #include "terrain.h"
 
-extern unsigned int			g_catWin;
-extern unsigned int			g_mouseWin;
+extern unsigned int	g_catWin;
+extern unsigned int	g_mouseWin;
 
-static const int cSpeedSingleStep = 1;
-static const int cSpeedSlow       = 2;
-static const int cSpeedMedium     = 16;
-static const int cSpeedFast       = 32;
-static const int cSpeedTurbo      = 128;
+static const int cSpeedSuperSlow  = -16;
+static const int cSpeedSlow       = -4;
+static const int cSpeedMedium     = -1;
+static const int cSpeedFast       = 1;
+static const int cSpeedTurbo      = 1000;
 
 //Add new states below
 enum StateName {
@@ -65,9 +65,9 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                 m_iterationsPerFrame = cSpeedTurbo;
                 break;
 
-            case RLSpeed::SingleStep:
+            case RLSpeed::SuperSlow:
             default:
-                m_iterationsPerFrame = cSpeedSingleStep;
+                m_iterationsPerFrame = cSpeedSuperSlow;
                 break;
         }
 
@@ -77,9 +77,9 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
         OnEnter
             m_punishmentValue = 0.0f;
             m_rewardValue = 0.0f;
-            m_trainingIterations = 2000;
+            m_trainingIterations = 1000;
             m_learningMethod = LearningMethod::Q_LEARNING;
-            m_iterationsPerFrame = 1;
+            m_iterationsPerFrame = cSpeedMedium;
             m_RLearner.SetRunning(false);
             ChangeState(STATE_Waiting);
 
@@ -115,6 +115,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
         DeclareState(STATE_Learning)
 
             DeclareStateInt(iterations)
+            DeclareStateInt(intermediateIterations)
 
         OnEnter
             if (m_RLearner.GetPlaying())
@@ -125,34 +126,62 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
             m_RLearner.SetRunning(true);
             m_RLearner.getWorld().ResetGame();
             iterations = 0;
+            intermediateIterations = 0;
 
         OnUpdate
-            int potentialIterations = iterations + m_iterationsPerFrame;
-            
-            if (potentialIterations >= m_trainingIterations)
+
+            // This adds intermediate frames in the case we want each one to be visible. 
+            // The intermediate period is ignored when we're not in a "super slow" mode.
+            if (m_iterationsPerFrame <= 0)
             {
-                m_RLearner.RunTraining(potentialIterations - m_trainingIterations);
+                int frameDelay = -1 * m_iterationsPerFrame;
 
-                // TODO: Signal completion of learning algorithm
-                g_catWin    = m_RLearner.getWorld().catScores;
-                g_mouseWin  = m_RLearner.getWorld().mouseScores;
+                if (intermediateIterations >= frameDelay)
+                {
+                    intermediateIterations = 0;
 
-                m_RLearner.SetRunning(false);
-                ChangeState(STATE_Waiting);
+                    m_RLearner.RunTraining(1);
+                    ++iterations;
+
+                    g_catWin = m_RLearner.getWorld().catScores;
+                    g_mouseWin = m_RLearner.getWorld().mouseScores;
+
+                    // Signal "teleport"
+                    m_learningWorld.DrawRLState(true);
+                }
+                else
+                {
+                    ++intermediateIterations;
+                }
             }
             else
             {
-                m_RLearner.RunTraining(m_iterationsPerFrame);
+                int potentialIterations = iterations + m_iterationsPerFrame;
 
-                iterations += m_iterationsPerFrame;
+                if (potentialIterations >= m_trainingIterations)
+                {
+                    m_RLearner.RunTraining(potentialIterations - m_trainingIterations);
 
-                g_catWin    = m_RLearner.getWorld().catScores;
-                g_mouseWin  = m_RLearner.getWorld().mouseScores;
+                    // TODO: Signal completion of learning algorithm
+                    g_catWin = m_RLearner.getWorld().catScores;
+                    g_mouseWin = m_RLearner.getWorld().mouseScores;
 
-                // Signal "teleport"
-                m_learningWorld.DrawRLState(true);
+                    m_RLearner.SetRunning(false);
+                    ChangeState(STATE_Waiting);
+                }
+                else
+                {
+                    m_RLearner.RunTraining(m_iterationsPerFrame);
+
+                    iterations += m_iterationsPerFrame;
+
+                    g_catWin = m_RLearner.getWorld().catScores;
+                    g_mouseWin = m_RLearner.getWorld().mouseScores;
+
+                    // Signal "teleport"
+                    m_learningWorld.DrawRLState(true);
+                }
             }
-
 
 
 	///////////////////////////////////////////////////////////////

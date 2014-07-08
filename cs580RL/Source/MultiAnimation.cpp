@@ -69,11 +69,11 @@ bool					g_aStarUsesAnalysis = false;//Default A* uses analysis
 bool                    g_movementFlag = true;//Agent will move by default
 bool                    g_fogOfWarFlag = false;//Agent has Fog of War disabled by default
 
-float					g_punish        = 0.0f;		            //Default punishment
-float					g_reward        = 0.0f;		            //Default reward
-int						g_trainloop     = 1000;		            //Default loop time
-bool					g_useQR         = true;			        //Default use Q-Learing
-RLSpeed					g_RLspeed       = RLSpeed::SingleStep;  //Default speed(single step)
+float					g_punish        = 0.0f;		            // Default punishment
+float					g_reward        = 0.0f;		            // Default reward
+int						g_trainloop     = 1000;		            // Default loop time
+bool					g_useQR         = true;			        // Default use Q-Learing
+RLSpeed					g_RLspeed       = RLSpeed::Medium;      // Default speed(single step)
 
 unsigned int			g_catWin = 0;				
 unsigned int			g_mouseWin = 0;
@@ -123,7 +123,7 @@ D3DXVECTOR3				g_click3D;
 #define IDC_START_TRAINING 36
 #define IDC_RESET 37
 #define IDC_START_PLAYING 38
-#define IDC_SPEED_SINGLESTEP 39
+#define IDC_SPEED_SUPERSLOW 39
 #define IDC_SPEED_SLOW 40
 #define IDC_SPEED_MEDIUM 41
 #define IDC_SPEED_FAST 42
@@ -271,7 +271,7 @@ void InitApp()
 	g_SampleUI.AddButton(IDC_RESET, L"Reset", 40, iY += 100, 120, 48);
 	g_SampleUI.AddButton(IDC_START_PLAYING, L"Start playing", 40, iY += 52, 120, 48);
 
-	g_SampleUI.AddButton(IDC_SPEED_SINGLESTEP, L"Singlestep", -350, iY += 140, 70, 16);
+	g_SampleUI.AddButton(IDC_SPEED_SUPERSLOW, L"Super slow", -350, iY += 140, 70, 16);
 	g_SampleUI.AddButton(IDC_SPEED_SLOW, L"Slow", -260, iY, 70, 16);
 	g_SampleUI.AddButton(IDC_SPEED_MEDIUM, L"Medium", -170, iY, 70, 16);
 	g_SampleUI.AddButton(IDC_SPEED_FAST, L"Fast", -80, iY, 70, 16);
@@ -822,9 +822,9 @@ void RenderText()
     case RLSpeed::Turbo:
 		txtHelper.DrawFormattedTextLine(L"Speed Level:	Turbo");
         break;
-    case RLSpeed::SingleStep:
+    case RLSpeed::SuperSlow:
 	default:
-		txtHelper.DrawFormattedTextLine(L"Speed Level:	Single step");
+		txtHelper.DrawFormattedTextLine(L"Speed Level:	Super slow");
 		break;
 	}
 
@@ -1386,8 +1386,8 @@ case IDC_START_PLAYING:
     g_database.SendMsgFromSystem(MSG_StartPlaying, MSG_Data(g_useQR));
 	break;
 
-case IDC_SPEED_SINGLESTEP:
-    g_RLspeed = RLSpeed::SingleStep;
+case IDC_SPEED_SUPERSLOW:
+    g_RLspeed = RLSpeed::SuperSlow;
     g_database.SendMsgFromSystem(MSG_SetRLSpeed, MSG_Data(g_RLspeed));
 	break;
 case IDC_SPEED_SLOW:
