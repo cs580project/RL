@@ -78,8 +78,8 @@ BeginStateMachine
 	OnMsg( MSG_SetAgentSpeed )
 		m_animStyle = msg->GetIntData();
 
-	OnMsg( MSG_SetSingleStep )
-		m_owner->GetMovement().SetSingleStep( msg->GetBoolData() );
+    OnMsg( MSG_SetSingleStep )
+        m_owner->GetMovement().SetSingleStep(msg->GetBoolData());
 
 	OnMsg( MSG_SetAStarUsesAnalysis )
 		m_owner->GetMovement().AStarUsesAnalysis( msg->GetBoolData() );
