@@ -135,7 +135,7 @@ void World::Initialize( CMultiAnim *pMA, std::vector< CTiny* > *pv_pChars, CSoun
 		int id = g_database.GetNewObjectID();
 		GameObject* agent = new GameObject( 10, OBJECT_Player, name );
 		D3DXVECTOR3 pos(0.0f, 0.0f, 0.0f);
-		agent->CreateBody( 100, pos );
+		agent->CreateBody( 10, pos );
 		agent->CreateMovement();
 		agent->CreateTiny( pMA, pv_pChars, pSM, dTimeCurrent );
 		g_database.Store( *agent );
@@ -155,7 +155,7 @@ void World::Initialize( CMultiAnim *pMA, std::vector< CTiny* > *pv_pChars, CSoun
         //Agent
         GameObject* agent = new GameObject(11, OBJECT_Player, name);
         D3DXVECTOR3 pos(1.0f, 0.0f, 1.0f);
-        agent->CreateBody(100, pos);
+        agent->CreateBody(10, pos);
         agent->CreateMovement();
         agent->CreateTiny(pMA, pv_pChars, pSM, dTimeCurrent);
         g_database.Store(*agent);

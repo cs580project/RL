@@ -172,7 +172,7 @@ HRESULT CTiny::Setup( CMultiAnim *pMA,
 
     // compute reorientation matrix based on default orientation and bounding radius
     D3DXMATRIX mx;
-    float fScale = 1.f;// / m_pMA->GetBoundingRadius() / 7.f;
+    float fScale = 0.3f;// / m_pMA->GetBoundingRadius() / 7.f;
     D3DXMatrixScaling( & mx, fScale, fScale, fScale );
     m_mxOrientation = mx;
     D3DXMatrixRotationX( & mx, -D3DX_PI / 2.0f );

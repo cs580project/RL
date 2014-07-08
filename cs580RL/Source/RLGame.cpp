@@ -120,7 +120,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
             m_RLearner.SetRunning(true);
             iterations = 0;
 			m_RLearner.getWorld().resetGame();
-			m_RLearner.RunTraining(50000);
+			m_RLearner.RunTraining(1000);
 			m_RLearner.SetRunning(false);
 			ChangeState(STATE_Waiting);
 			g_catWin = m_RLearner.getWorld().catScores;
@@ -148,15 +148,25 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
 
 
 	///////////////////////////////////////////////////////////////
-    DeclareState( STATE_Playing )
+		DeclareState(STATE_Playing)
 
-        OnEnter
-            m_RLearner.SetRunning(false);
-            m_RLearner.SetPlaying(true);
-
+		OnEnter
+				//m_RLearner.SetRunning(false);
+				//m_RLearner.SetPlaying(true);
+			m_learningWorld.resetState();
             // TODO: Reset to starting positions
 
-        OnUpdate
+		OnPeriodicTimeInState(0.5)
+		if (!m_learningWorld.endState())
+		{
+			int   action = m_RLearner.SelectAction(m_learningWorld.getCurrentState());
+			m_learningWorld.getNextState(action);
+			m_learningWorld.drawState();
+		}
+		else
+		{
+			ChangeState(STATE_Waiting);
+		}
             // TODO: Update each frame based on policy
 
 

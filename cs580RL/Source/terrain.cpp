@@ -178,7 +178,7 @@ void Terrain::DrawDebugVisualization( IDirect3DDevice9* pd3dDevice )
 			switch (m_terrain[r][c])
 			{
 			case TILE_WALL:
-				g_debugdrawing.DrawCube( pd3dDevice, &pos, 1.0f/m_width, DEBUG_COLOR_BLACK );
+				g_debugdrawing.DrawCube( pd3dDevice, &pos, 0.8f/m_width, DEBUG_COLOR_BLACK );
 				break;
 			case TILE_EMPTY:
 				g_debugdrawing.DrawQuad( pd3dDevice, &pos, 1.0f/m_width, m_terrainColor[r][c] );

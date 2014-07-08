@@ -27,7 +27,7 @@ public:
 
 	void setRewardVal(float reward) { currentReward = reward; }
 	void setPunishVal(float punish) { currentPunish = punish; }
-
+	void drawState();
 	int catScores, mouseScores;	//keep the score
 
 private:

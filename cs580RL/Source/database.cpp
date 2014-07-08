@@ -123,7 +123,7 @@ void Database::SendMsgFromSystem( objectID id, MSG_Name name, MSG_Data& data )
 
 	if( object )
 	{
-		MSG_Data data;
+		//MSG_Data data;
 		MSG_Object msg( 0.0f, name, SYSTEM_OBJECT_ID, id, SCOPE_TO_STATE_MACHINE, 0, STATE_MACHINE_QUEUE_ALL, data, false, false );
 		if(object->GetStateMachineManager())
 		{

@@ -73,9 +73,7 @@ vector<int>& RLWorld::getNextState(int action)
 	mx = d.width;
 	my = d.height;
 	}*/
-	//g_database.SendMsgFromSystem(MSG_Teleport, MSG_Data(D3DXVECTOR2(mx, my)));
-	//g_database.SendMsgFromSystem(11, MSG_Teleport, MSG_Data(D3DXVECTOR2(mx, my)));
-	//Sleep(200);
+
 	return getCurrentState();
 }
 
@@ -250,6 +248,17 @@ Pos RLWorld::getCoords(int action)
 		break;
 	}
 	return nPos;
+}
+
+void RLWorld::drawState()
+{
+	//g_database.SendMsgFromSystem(MSG_Teleport, MSG_Data(D3DXVECTOR2(mx, my)));
+	g_database.SendMsgFromSystem(10, MSG_Teleport, MSG_Data(D3DXVECTOR2(mx, my)));
+	g_database.SendMsgFromSystem(11, MSG_Teleport, MSG_Data(D3DXVECTOR2(cx, cy)));
+	//Sleep(200);
+	;
+	g_terrain.ResetColors();
+	g_terrain.SetColor(chx,chy, DEBUG_COLOR_BLUE);
 }
 
 

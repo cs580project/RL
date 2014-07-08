@@ -30,12 +30,13 @@ public:
     inline void        SetRunning(bool const& running) { m_running = running;   };
     inline void        SetPlaying(bool const& playing) { m_playing = playing;   };
 	RLWorld&		   getWorld() { return m_learningWorld; }
+	int         SelectAction(vector<int>& state);
 private:
     void        RunEpoch();
     void        QLearning();
     void        Sarsa();
     void        QLambda();
-    int         SelectAction(vector<int>& state);
+    
 
 	RLPolicy            m_policy;
 	RLWorld             m_learningWorld;
