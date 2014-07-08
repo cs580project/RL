@@ -2,6 +2,7 @@
 #include "RLWorld.h"
 #include "terrain.h"
 #include "global.h"
+#include "database.h"
 
 
 RLWorld::RLWorld()
@@ -72,18 +73,23 @@ vector<int>& RLWorld::getNextState(int action)
 	mx = d.width;
 	my = d.height;
 	}*/
-
+	//g_database.SendMsgFromSystem(MSG_Teleport, MSG_Data(D3DXVECTOR2(mx, my)));
+	//g_database.SendMsgFromSystem(11, MSG_Teleport, MSG_Data(D3DXVECTOR2(mx, my)));
+	//Sleep(200);
 	return getCurrentState();
 }
 
 void RLWorld::resetState()
 {
-	catScores = 0;
-	mouseScores = 0;
 	waitingReward = 0;
 	setRandomPos();
 }
 
+void RLWorld::resetGame()
+{
+	catScores = 0;
+	mouseScores = 0;
+}
 bool RLWorld::validAction(int action)
 {
 	Pos nPos = getCoords(action);
@@ -220,7 +226,9 @@ void RLWorld::InitialValue()
 		stateArray.push_back(-1);
 
 	currentReward = 50;
-	currentPunish = 100;
+	currentPunish = 10;
+	catScores = 0;
+	mouseScores = 0;
 }
 
 Pos RLWorld::getCoords(int action)
@@ -243,3 +251,5 @@ Pos RLWorld::getCoords(int action)
 	}
 	return nPos;
 }
+
+

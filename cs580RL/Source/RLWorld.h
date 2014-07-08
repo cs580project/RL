@@ -21,18 +21,21 @@ public:
 	vector<int>& getNextState(int action);
 	vector<int>& getCurrentState();
 	void resetState();
+	void resetGame();
 	bool validAction(int action);	//check if the action is legal
 	bool endState();
 
 	void setRewardVal(float reward) { currentReward = reward; }
 	void setPunishVal(float punish) { currentPunish = punish; }
 
+	int catScores, mouseScores;	//keep the score
+
 private:
 	vector<int> currentState;	//include coords for mouse,cat,cheese
 	int mx, my;	//coordinates for mouse
 	int cx, cy; //coord for cat
 	int chx, chy;	// coord for cheese
-	int catScores, mouseScores;	//keep the score
+	
 	float waitingReward;
 	float currentReward, currentPunish;
 	int** currentMap;	//map info

@@ -35,7 +35,8 @@ bool RLAgent::States( State_Machine_Event event, MSG_Object * msg, int state, in
         ChangeState(STATE_Initialize);
 
     OnMsg(MSG_Teleport)
-        int r = msg->GetVector2Data().x; int c = msg->GetVector2Data().y;
+        int r = msg->GetVector2Data().x; 
+	    int c = msg->GetVector2Data().y;
         D3DXVECTOR3 coords = g_terrain.GetCoordinates(r, c);
         m_owner->GetBody().SetPos(coords);
         ChangeState(STATE_Initialize);

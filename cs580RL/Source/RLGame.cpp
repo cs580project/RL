@@ -3,6 +3,8 @@
 #include "database.h"
 #include "terrain.h"
 
+extern unsigned int			g_catWin;
+extern unsigned int			g_mouseWin;
 
 static const int cSpeedSingleStep = 1;
 static const int cSpeedSlow       = 10;
@@ -48,7 +50,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
         OnEnter
             m_punishmentValue = 0.0f;
             m_rewardValue = 0.0f;
-            m_trainingIterations = 1000;
+            m_trainingIterations = 2000;
             m_learningMethod = LearningMethod::Q_LEARNING;
             m_iterationsPerFrame = 1;
             m_RLearner.SetRunning(false);
@@ -117,25 +119,31 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
         OnEnter
             m_RLearner.SetRunning(true);
             iterations = 0;
-            
-        OnUpdate
-            int potentialIterations = iterations + m_iterationsPerFrame;
-            if (potentialIterations >= m_trainingIterations)
-            {
-                m_RLearner.RunTraining(potentialIterations - m_trainingIterations);
+			m_RLearner.getWorld().resetGame();
+			m_RLearner.RunTraining(50000);
+			m_RLearner.SetRunning(false);
+			ChangeState(STATE_Waiting);
+			g_catWin = m_RLearner.getWorld().catScores;
+			g_mouseWin = m_RLearner.getWorld().mouseScores;
 
-                // TODO: Signal completion of learning algorithm
+        //OnUpdate
+        //    int potentialIterations = iterations + m_iterationsPerFrame;
+        //    if (potentialIterations >= m_trainingIterations)
+        //    {
+        //        m_RLearner.RunTraining(potentialIterations - m_trainingIterations);
 
-                m_RLearner.SetRunning(false);
-                ChangeState(STATE_Waiting);
-            }
-            else
-            {
-                m_RLearner.RunTraining(m_iterationsPerFrame);
-                iterations += m_iterationsPerFrame;
+        //        // TODO: Signal completion of learning algorithm
 
-                // TODO: Signal "teleport"
-            }
+        //        m_RLearner.SetRunning(false);
+        //        ChangeState(STATE_Waiting);
+        //    }
+        //    else
+        //    {
+        //        m_RLearner.RunTraining(m_iterationsPerFrame);
+        //        iterations += m_iterationsPerFrame;
+
+        //        // TODO: Signal "teleport"
+        //    }
 
 
 

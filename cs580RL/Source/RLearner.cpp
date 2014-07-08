@@ -60,7 +60,7 @@ void RLearner::QLearning()
             return;
         }
 
-		vector<int>&    state       = m_learningWorld.getCurrentState();
+		vector<int>    state       = m_learningWorld.getCurrentState();
 		int             action      = SelectAction(state);
 		vector<int>&    newstate    = m_learningWorld.getNextState(action);
 		float           reward      = m_learningWorld.getReward();

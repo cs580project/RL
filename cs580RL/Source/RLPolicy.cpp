@@ -35,7 +35,7 @@ int RLPolicy::getBestAction(vector<int> state)
 		return rand() % actionNum;
 	vector<float>& qvalues = qValueTable[state];
 
-	float maxQ = -1;
+	float maxQ = -100000;
 	int bestAction=0;
 	for (int i = 0; i < actionNum; ++i)
 	{

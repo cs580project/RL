@@ -29,7 +29,7 @@ public:
     inline bool&       GetPlaying()                    { return m_playing;      };
     inline void        SetRunning(bool const& running) { m_running = running;   };
     inline void        SetPlaying(bool const& playing) { m_playing = playing;   };
-
+	RLWorld&		   getWorld() { return m_learningWorld; }
 private:
     void        RunEpoch();
     void        QLearning();

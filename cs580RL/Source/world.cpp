@@ -132,7 +132,8 @@ void World::Initialize( CMultiAnim *pMA, std::vector< CTiny* > *pv_pChars, CSoun
         sprintf_s(name, 256, "Mouse%i", i);
 
         //Agent
-		GameObject* agent = new GameObject( g_database.GetNewObjectID(), OBJECT_Player, name );
+		int id = g_database.GetNewObjectID();
+		GameObject* agent = new GameObject( 10, OBJECT_Player, name );
 		D3DXVECTOR3 pos(0.0f, 0.0f, 0.0f);
 		agent->CreateBody( 100, pos );
 		agent->CreateMovement();
@@ -152,7 +153,7 @@ void World::Initialize( CMultiAnim *pMA, std::vector< CTiny* > *pv_pChars, CSoun
         sprintf_s(name, 256, "Cat%i", i);
 
         //Agent
-        GameObject* agent = new GameObject(g_database.GetNewObjectID(), OBJECT_Player, name);
+        GameObject* agent = new GameObject(11, OBJECT_Player, name);
         D3DXVECTOR3 pos(1.0f, 0.0f, 1.0f);
         agent->CreateBody(100, pos);
         agent->CreateMovement();
@@ -167,10 +168,10 @@ void World::Initialize( CMultiAnim *pMA, std::vector< CTiny* > *pv_pChars, CSoun
 
 
     // Create supervisor
-    GameObject* manager = new GameObject(g_database.GetNewObjectID(), OBJECT_Gameflow, "StateManager");
-    g_database.Store(*manager);
-    manager->CreateStateMachineManager();
-    manager->GetStateMachineManager()->PushStateMachine(*new RLGame(*manager), STATE_MACHINE_QUEUE_0, true);
+	GameObject* manager = new GameObject(g_database.GetNewObjectID(), OBJECT_Gameflow, "StateManager");
+	g_database.Store(*manager);
+	manager->CreateStateMachineManager();
+	manager->GetStateMachineManager()->PushStateMachine(*new RLGame(*manager), STATE_MACHINE_QUEUE_0, true);
 
 #endif
 

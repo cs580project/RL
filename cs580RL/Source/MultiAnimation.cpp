@@ -75,8 +75,8 @@ int						g_trainloop     = 1000;		            //Default loop time
 bool					g_useQR         = true;			        //Default use Q-Learing
 RLSpeed					g_RLspeed       = RLSpeed::SingleStep;  //Default speed(single step)
 
-unsigned int			catWin = 0;				
-unsigned int			mouseWin = 0;
+unsigned int			g_catWin = 0;				
+unsigned int			g_mouseWin = 0;
 
 D3DXVECTOR3				g_click2D;
 D3DXVECTOR3				g_click3D;
@@ -782,7 +782,7 @@ void RenderText()
 	//Print on Cat&Mouse win
 	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
 	txtHelper.SetInsertionPos(200, y);
-	txtHelper.DrawFormattedTextLine(L"CATS:             %d                    MOUSE:             %d", catWin,mouseWin);
+	txtHelper.DrawFormattedTextLine(L"CATS:             %d                    MOUSE:             %d", g_catWin,g_mouseWin);
 
 	//print train time
 	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
