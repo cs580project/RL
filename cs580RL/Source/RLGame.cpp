@@ -143,8 +143,8 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                     m_RLearner.RunTraining(1);
                     ++iterations;
 
-                    g_catWin = m_RLearner.getWorld().catScores;
-                    g_mouseWin = m_RLearner.getWorld().mouseScores;
+                    g_catWin = m_RLearner.getWorld().returnCatScore();
+                    g_mouseWin = m_RLearner.getWorld().returnMouseScore();
 
                     // Signal "teleport"
                     m_learningWorld.DrawRLState(true);
@@ -163,8 +163,8 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                     m_RLearner.RunTraining(potentialIterations - m_trainingIterations);
 
                     // TODO: Signal completion of learning algorithm
-                    g_catWin = m_RLearner.getWorld().catScores;
-                    g_mouseWin = m_RLearner.getWorld().mouseScores;
+					g_catWin = m_RLearner.getWorld().returnCatScore();
+					g_mouseWin = m_RLearner.getWorld().returnMouseScore();
 
                     m_RLearner.SetRunning(false);
                     ChangeState(STATE_Waiting);
@@ -175,8 +175,8 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
 
                     iterations += m_iterationsPerFrame;
 
-                    g_catWin = m_RLearner.getWorld().catScores;
-                    g_mouseWin = m_RLearner.getWorld().mouseScores;
+					g_catWin = m_RLearner.getWorld().returnCatScore();
+					g_mouseWin = m_RLearner.getWorld().returnMouseScore();
 
                     // Signal "teleport"
                     m_learningWorld.DrawRLState(true);
