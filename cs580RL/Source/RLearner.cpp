@@ -84,7 +84,34 @@ void RLearner::QLambda()
 
 void RLearner::Sarsa()
 {
+	if (m_playing)
+	{
+		return;
+	}
 
+	int newAction;
+	float thisQ = 0.f;
+	float nextQ = 0.f;
+	float newQ = 0.f;
+
+	vector<int>     state = m_learningWorld.GetCurrentState();
+	int   action = SelectAction(state);
+	while (!m_learningWorld.EndState())
+	{
+		if (!m_running)
+		{
+			return;
+		}
+
+		vector<int>&    newstate = m_learningWorld.GetNextState(action);
+		float           reward = m_learningWorld.GetReward();
+
+		newAction = SelectAction(newstate);
+
+		thisQ = m_policy.getQValue(state, action);
+		nextQ = m_policy.getQValue(newstate, newAction);
+		
+	}
 }
 
 int RLearner::SelectAction(vector<int>& state)
