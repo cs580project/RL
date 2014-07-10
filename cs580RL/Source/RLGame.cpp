@@ -17,6 +17,7 @@ enum StateName {
     STATE_Initialize,	//The first enum is the starting state
     STATE_Waiting,
     STATE_Learning,
+	STATE_LearningWithoutGUI,
     STATE_Playing,
     STATE_EndGame
 };
@@ -109,15 +110,29 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
 
         OnMsg(MSG_StartPlaying)
             ChangeState(STATE_Playing);
+	//////////////////////////////////////////////////////////////
+		DeclareState(STATE_LearningWithoutGUI)
+			OnEnter
+			if (m_RLearner.GetPlaying())
+			{
+				PopState();
+			}
 
+			m_RLearner.getWorld().ResetGame();
+			m_RLearner.SetRunning(true);
+			m_RLearner.RunTraining(m_trainingIterations, m_learningMethod);
+            g_catWin = m_RLearner.getWorld().returnCatScore();
+            g_mouseWin = m_RLearner.getWorld().returnMouseScore();
+			m_RLearner.SetRunning(false);
+			ChangeState(STATE_Waiting);
 
 	///////////////////////////////////////////////////////////////
         DeclareState(STATE_Learning)
-
             DeclareStateInt(iterations)
             DeclareStateInt(intermediateIterations)
 
         OnEnter
+
             if (m_RLearner.GetPlaying())
             {
                 PopState();
@@ -140,7 +155,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                 {
                     intermediateIterations = 0;
 
-                    m_RLearner.RunTraining(1);
+					m_RLearner.RunTraining(1, m_learningMethod);
                     ++iterations;
 
                     g_catWin = m_RLearner.getWorld().returnCatScore();
@@ -160,7 +175,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
 
                 if (potentialIterations >= m_trainingIterations)
                 {
-                    m_RLearner.RunTraining(potentialIterations - m_trainingIterations);
+					m_RLearner.RunTraining(potentialIterations - m_trainingIterations, m_learningMethod);
 
                     // TODO: Signal completion of learning algorithm
 					g_catWin = m_RLearner.getWorld().returnCatScore();
@@ -171,7 +186,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                 }
                 else
                 {
-                    m_RLearner.RunTraining(m_iterationsPerFrame);
+					m_RLearner.RunTraining(m_iterationsPerFrame, m_learningMethod);
 
                     iterations += m_iterationsPerFrame;
 

@@ -14,13 +14,7 @@ RLWorld::RLWorld()
 
 RLWorld::~RLWorld()
 {
-	if (currentMap)
-	{
-		//for (int i = 0; i < mapWidth; i++)
-		//	delete currentMap[i];
 
-		//delete[] currentMap;
-	}
 }
 
 float RLWorld::GetReward()
@@ -232,11 +226,6 @@ Pos RLWorld::MoveToNewPos(int currentx, int currenty, int targetx, int targety)
 void RLWorld::LoadMapInfo()
 {
 	mapWidth = g_terrain.GetWidth();
-
-	//currentMap = new int*[mapWidth];
-
-	//for (int i = 0; i < mapWidth; i++)
-	//	currentMap[i] = new int[mapWidth];
 }
 
 void RLWorld::SetRandomPos()

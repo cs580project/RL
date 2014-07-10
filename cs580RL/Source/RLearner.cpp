@@ -21,11 +21,11 @@ RLearner::~RLearner()
 
 }
 
-void RLearner::RunEpoch()
+void RLearner::RunEpoch(LearningMethod method)
 {
 	m_learningWorld.ResetState();
 
-	switch (m_learningMethod)
+	switch (method)
 	{
 	case Q_LEARNING:
 		QLearning();
@@ -134,21 +134,21 @@ int RLearner::SelectAction(vector<int>& state)
 	return selectedAction;
 }
 
-void RLearner::RunTraining(int epochNum)
+void RLearner::RunTraining(int numberOfEpochs, LearningMethod method)
 {
     if (m_playing)
     {
         return;
     }
 
-	for (int i = 0; i < epochNum; ++i)
+	for (int i = 0; i < numberOfEpochs; ++i)
     {
         if (!m_running)
         {
             return;
         }
 
-		RunEpoch();
+		RunEpoch(method);
 	}
 }
 

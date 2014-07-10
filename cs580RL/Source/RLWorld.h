@@ -50,7 +50,6 @@ private:
 	int     cx, cy;             //coord for cat
 	int     chx, chy;	        // coord for cheese
 
-    int**   currentMap;	        //map info
     int     mapWidth;
 
 	float   waitingReward;

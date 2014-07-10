@@ -22,7 +22,7 @@ public:
 	RLearner(RLWorld& world);
 	~RLearner();
 
-	void RunTraining(int numberOfEpochs);
+	void RunTraining(int numberOfEpochs, LearningMethod method);
 
     inline RLPolicy&   GetPolicy()                     { return m_policy;       };
     inline bool&       GetRunning()                    { return m_running;      };
@@ -32,7 +32,7 @@ public:
 	RLWorld&		   getWorld() { return m_learningWorld; }
 	int         SelectAction(vector<int>& state);
 private:
-    void        RunEpoch();
+    void RunEpoch(LearningMethod method);
     void        QLearning();
     void        Sarsa();
     void        QLambda();
