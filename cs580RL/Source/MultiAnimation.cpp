@@ -74,6 +74,8 @@ float					g_reward        = 0.0f;		            // Default reward
 int						g_trainloop     = 1000;		            // Default loop time
 bool					g_useQR         = true;			        // Default use Q-Learing
 RLSpeed					g_RLspeed       = RLSpeed::Medium;      // Default speed(single step)
+int						g_cureIteration = 0;					// Current iteration
+int						g_trainingStatus= 0;					// Training status info(such as waiting, training, complete, get from somewhere)
 
 unsigned int			g_catWin = 0;				
 unsigned int			g_mouseWin = 0;
@@ -146,6 +148,8 @@ void    CALLBACK OnLostDevice( void* pUserContext );
 void    CALLBACK OnDestroyDevice( void* pUserContext );
 
 void    InitApp();
+void	RedrawButtons();
+
 HRESULT LoadMesh( IDirect3DDevice9* pd3dDevice, WCHAR* strFileName, ID3DXMesh** ppMesh );
 void    RenderText();
 
@@ -182,14 +186,14 @@ INT WINAPI WinMain( HINSTANCE, HINSTANCE, LPSTR, int )
     // Show the cursor and clip it when in full screen
     DXUTSetCursorSettings( true, true );
 
-    InitApp();
+    
 
     // Initialize DXUT and create the desired Win32 window and Direct3D
     // device for the application. Calling each of these functions is optional, but they
     // allow you to set several options which control the behavior of the framework.
     DXUTInit( true, true ); // Parse the command line, handle the default hotkeys, and show msgboxes
 	DXUTCreateWindow( L"CS380/CS580 Project 2: A* Pathfinding" );
-
+	InitApp();
     // We need to set up DirectSound after we have a window.
     g_DSound.Initialize( DXUTGetHWND(), DSSCL_PRIORITY );
 
@@ -224,6 +228,10 @@ INT WINAPI WinMain( HINSTANCE, HINSTANCE, LPSTR, int )
 //--------------------------------------------------------------------------------------
 void InitApp()
 {
+	LPRECT winRect = new RECT;
+	GetWindowRect(DXUTGetHWND(), winRect);
+
+	long winMidVer = (winRect->right + winRect->left) / 2 - winRect->left;
     // Initialize dialogs
     g_SettingsDlg.Init( &g_DialogResourceManager );
     g_HUD.Init( &g_DialogResourceManager );
@@ -257,7 +265,7 @@ void InitApp()
 	g_SampleUI.AddButton(IDC_PUNISH,L"Punish",40,iY,60,24);
 	g_SampleUI.AddButton(IDC_REWARD,L"Reward",100, iY, 60, 24);
 
-	g_SampleUI.AddButton(IDC_LOOP_1000, L"1000", 40, iY+=26, 60, 24);
+	g_SampleUI.AddButton(IDC_LOOP_1000, L"1000", 40, iY+=52, 60, 24);
 	g_SampleUI.AddButton(IDC_LOOP_3000, L"3000", 100, iY, 60, 24);
 
 	g_SampleUI.AddButton(IDC_LOOP_5000, L"5000", 40, iY += 26, 60, 24);
@@ -271,11 +279,11 @@ void InitApp()
 	g_SampleUI.AddButton(IDC_RESET, L"Reset", 40, iY += 100, 120, 48);
 	g_SampleUI.AddButton(IDC_START_PLAYING, L"Start playing", 40, iY += 52, 120, 48);
 
-	g_SampleUI.AddButton(IDC_SPEED_SUPERSLOW, L"Super slow", -350, iY += 140, 70, 16);
-	g_SampleUI.AddButton(IDC_SPEED_SLOW, L"Slow", -260, iY, 70, 16);
-	g_SampleUI.AddButton(IDC_SPEED_MEDIUM, L"Medium", -170, iY, 70, 16);
-	g_SampleUI.AddButton(IDC_SPEED_FAST, L"Fast", -80, iY, 70, 16);
-	g_SampleUI.AddButton(IDC_SPEED_TURBO, L"Turbo", 10, iY, 70, 16);
+	g_SampleUI.AddButton(IDC_SPEED_SUPERSLOW, L"Super slow", -(winMidVer + 30), iY += 140, 70, 16);
+	g_SampleUI.AddButton(IDC_SPEED_SLOW, L"Slow", -(winMidVer -60), iY, 70, 16);
+	g_SampleUI.AddButton(IDC_SPEED_MEDIUM, L"Medium", -(winMidVer -150), iY, 70, 16);
+	g_SampleUI.AddButton(IDC_SPEED_FAST, L"Fast", -(winMidVer -240), iY, 70, 16);
+	g_SampleUI.AddButton(IDC_SPEED_TURBO, L"Turbo", -(winMidVer - 330), iY, 70, 16);
 
     // Add mixed vp to the available vp choices in device settings dialog.
     DXUTGetD3D9Enumeration()->SetPossibleVertexProcessingList( true, false, false, true );
@@ -388,7 +396,7 @@ HRESULT CALLBACK OnCreateDevice( IDirect3DDevice9* pd3dDevice, const D3DSURFACE_
     V_RETURN( g_DialogResourceManager.OnD3D9CreateDevice( pd3dDevice ) );
     V_RETURN( g_SettingsDlg.OnD3D9CreateDevice( pd3dDevice ) );
     // Initialize the font
-    V_RETURN( D3DXCreateFont( pd3dDevice, 15, 0, FW_BOLD, 1, FALSE, DEFAULT_CHARSET,
+    V_RETURN( D3DXCreateFont( pd3dDevice, 15, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET,
                          OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
                          L"Arial", &g_pFont ) );
 
@@ -765,13 +773,23 @@ void CALLBACK OnFrameRender( IDirect3DDevice9* pd3dDevice, double fTime, float f
 void RenderText()
 {
 	int y = 5;
+	LPRECT winRect = new RECT;
+	GetWindowRect(DXUTGetHWND(), winRect);
+	long winMidHor = (winRect->left + winRect->right) / 2 - winRect->left;
+	long winMidVer = (winRect->bottom + winRect->top) / 2 - winRect->top;
+	long winWidth = winRect->right - winRect->left;
+	long winHeight = winRect->top - winRect->bottom;
+	int bBW = (int)(winWidth*0.09);	//button width
+	int bBH = (int)(winHeight*(-0.046));	//button height
+	int rightSide = 170;
+
     // The helper object simply helps keep track of text position, and color
     // and then it calls pFont->DrawText( m_pSprite, strMsg, -1, &rc, DT_NOCLIP, m_clr );
     // If NULL is passed in as the sprite object, then it will work however the
     // pFont->DrawText() will not be batched together.  Batching calls will improves performance.
     CDXUTTextHelper txtHelper( g_pFont, g_pTextSprite, 15 );
     const D3DSURFACE_DESC* pd3dsdBackBuffer = DXUTGetD3D9BackBufferSurfaceDesc();
-
+	
     // Output statistics
     txtHelper.Begin();
     txtHelper.SetInsertionPos( 5, 5 );
@@ -781,17 +799,24 @@ void RenderText()
 
 	//Print on Cat&Mouse win
 	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
-	txtHelper.SetInsertionPos(200, y);
-	txtHelper.DrawFormattedTextLine(L"CATS:             %d                    MOUSE:             %d", g_catWin,g_mouseWin);
+	txtHelper.SetInsertionPos(winMidHor - 125, y);
+	txtHelper.DrawFormattedTextLine(L"CAT:             %d              MOUSE:             %d", g_catWin, g_mouseWin);
+
+	//y += 35;
+	//print current iteration
+	g_cureIteration = g_catWin + g_mouseWin;
+	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
+	txtHelper.SetInsertionPos(winRect->right - winRect->left - (int)(2.05*bBW), y += (int)(bBH*1.75));
+	txtHelper.DrawFormattedTextLine(L"Iterations:%d", g_cureIteration);
 
 	//print train time
 	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
-	txtHelper.SetInsertionPos(540, 94);
+	txtHelper.SetInsertionPos(winRect->right - winRect->left - (int)(2.05*bBW), y += (int)(bBH*3.5));
 	txtHelper.DrawFormattedTextLine(L"LOOP:%d", g_trainloop);
 
 	//print method
 	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
-	txtHelper.SetInsertionPos(515, 149);
+	txtHelper.SetInsertionPos(winRect->right - winRect->left - (int)(2.05*bBW), y += (int)(bBH * 2));
 	if (g_useQR)
 		txtHelper.DrawFormattedTextLine(L"Current:Q-Learning");
 	else
@@ -828,103 +853,38 @@ void RenderText()
 		break;
 	}
 
+	//print training status info
+	//Choose the one you like, or both
+	//Method NO.1
+	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
+	txtHelper.SetInsertionPos(5, 60);
+	switch (g_trainingStatus)
+	{
+	case 0:
+		txtHelper.DrawFormattedTextLine(L"Training Status:	Waiting");
+		break;
+	case 1:
+		txtHelper.DrawFormattedTextLine(L"Training Status:	Training");
+		break;
+	case 2:
+		txtHelper.DrawFormattedTextLine(L"Training Status:	Training complete");
+		break;	
+	default:
+		txtHelper.DrawFormattedTextLine(L"Training Status:	I don't know");
+		break;
+	}
 
-	/*
-    // Dump out the FPS and device stats
-    //txtHelper.SetInsertionPos( 5, 150 );
-    //txtHelper.DrawFormattedTextLine( L"  Time: %2.3f", DXUTGetGlobalTimer()->GetTime() );
-    //txtHelper.DrawFormattedTextLine( L"  Number of models: %d", g_v_pCharacters.size() );
+	//Method NO.2
+	txtHelper.SetForegroundColor(D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
+	txtHelper.SetInsertionPos(winMidHor - 60, winMidVer);
+	if (g_trainingStatus)
+		txtHelper.DrawFormattedTextLine(L"Training Complete!!");
 
-	// Print out Heuristic Weight
-    txtHelper.SetForegroundColor( D3DXCOLOR( 0.0f, 0.0f, 0.0f, 1.0f ) );
-	txtHelper.SetInsertionPos( 5, y );
-	txtHelper.DrawFormattedTextLine( L"Map Index:             %d", g_terrain.GetMapIndex() );
-
-	// Print out Heuristic Weight
-    txtHelper.SetForegroundColor( D3DXCOLOR( 0.0f, 0.0f, 0.0f, 1.0f ) );
-	txtHelper.SetInsertionPos( 5, y+=10 );
-	txtHelper.DrawFormattedTextLine( L"Heuristic Weight: %.2f", g_heuristicWeight );
-
-	// Print out Heuristic Calc
-    txtHelper.SetForegroundColor( D3DXCOLOR( 0.0f, 0.0f, 0.0f, 1.0f ) );
-	txtHelper.SetInsertionPos( 5, y+=10 );
-	if(g_heuristicCalc == 0) { txtHelper.DrawFormattedTextLine( L"Heuristic Calc:       Euclidean" ); }
-	else if(g_heuristicCalc == 1) { txtHelper.DrawFormattedTextLine( L"Heuristic Calc:       Octile" ); }
-	else if(g_heuristicCalc == 2) { txtHelper.DrawFormattedTextLine( L"Heuristic Calc:       Chebyshev" ); }
-	else { txtHelper.DrawFormattedTextLine( L"Heuristic Calc:       Manhattan" ); }
-
-	// Print out Smoothing
-    txtHelper.SetForegroundColor( D3DXCOLOR( 0.0f, 0.0f, 0.0f, 1.0f ) );
-	txtHelper.SetInsertionPos( 5, y+=10 );
-	if(g_smoothing) { txtHelper.DrawFormattedTextLine( L"Smoothing:             On" ); }
-	else { txtHelper.DrawFormattedTextLine( L"Smoothing:             Off" ); }
-
-	// Print out Rubberbanding
-    txtHelper.SetForegroundColor( D3DXCOLOR( 0.0f, 0.0f, 0.0f, 1.0f ) );
-	txtHelper.SetInsertionPos( 5, y+=10 );
-	if(g_rubberbanding) { txtHelper.DrawFormattedTextLine( L"Rubberbanding:    On" ); }
-	else { txtHelper.DrawFormattedTextLine( L"Rubberbanding:    Off" ); }
-
-	// Print out Straight Line Optimization
-    txtHelper.SetForegroundColor( D3DXCOLOR( 0.0f, 0.0f, 0.0f, 1.0f ) );
-	txtHelper.SetInsertionPos( 5, y+=10 );
-	if(g_straightline) { txtHelper.DrawFormattedTextLine( L"Straight Line:         On" ); }
-	else { txtHelper.DrawFormattedTextLine( L"Straight Line:         Off" ); }
-
-	// Print out Terrain Analysis
-    txtHelper.SetForegroundColor( D3DXCOLOR( 0.0f, 0.0f, 0.0f, 1.0f ) );
-	txtHelper.SetInsertionPos( 5, y+=10 );
-	if(g_terrain.m_analysis == TerrainAnalysis_None) { txtHelper.DrawFormattedTextLine( L"Terrain Analysis:   None" ); }
-	else if(g_terrain.m_analysis == TerrainAnalysis_OpennessClosestWall) { txtHelper.DrawFormattedTextLine( L"Terrain Analysis:   Openness Closest Wall" ); }
-	else if(g_terrain.m_analysis == TerrainAnalysis_OpennessRearCover) { txtHelper.DrawFormattedTextLine( L"Terrain Analysis:   Openness Rear Cover" ); }
-	else if(g_terrain.m_analysis == TerrainAnalysis_Visibility) { txtHelper.DrawFormattedTextLine( L"Terrain Analysis:   Visibility" ); }
-	else if(g_terrain.m_analysis == TerrainAnalysis_RearCoverWithHighVisibility) { txtHelper.DrawFormattedTextLine( L"Terrain Analysis:   Rear Cover with High Visibility" ); }
-	else if(g_terrain.m_analysis == TerrainAnalysis_VisibleToPlayer) { txtHelper.DrawFormattedTextLine( L"Terrain Analysis:   Visible To Player" ); }
-	else if(g_terrain.m_analysis == TerrainAnalysis_Search) { txtHelper.DrawFormattedTextLine( L"Terrain Analysis:   Search" ); }
-
-	// Print out A* uses Analysis
-    txtHelper.SetForegroundColor( D3DXCOLOR( 0.0f, 0.0f, 0.0f, 1.0f ) );
-	txtHelper.SetInsertionPos( 5, y+=10 );
-	if(g_aStarUsesAnalysis) { txtHelper.DrawFormattedTextLine( L"A* w/Analysis:        On" ); }
-	else { txtHelper.DrawFormattedTextLine( L"A* w/Analysis:        Off" ); }
-
-	// Print out Agent Speed
-    txtHelper.SetForegroundColor( D3DXCOLOR( 0.0f, 0.0f, 0.0f, 1.0f ) );
-	txtHelper.SetInsertionPos( 5, y+=10 );
-	if(g_animStyle == 1) { txtHelper.DrawFormattedTextLine( L"Agent Speed:         Jog" ); }
-	else if(g_animStyle == 0) { txtHelper.DrawFormattedTextLine( L"Agent Speed:         Walk" ); }
-
-	// Print out Single Step
-    txtHelper.SetForegroundColor( D3DXCOLOR( 0.0f, 0.0f, 0.0f, 1.0f ) );
-	txtHelper.SetInsertionPos( 5, y+=10 );
-	if(g_singleStep) { txtHelper.DrawFormattedTextLine( L"Single Step:            On" ); }
-	else { txtHelper.DrawFormattedTextLine( L"Single Step:            Off" ); }
-
-    // Print out Movement flag
-    txtHelper.SetInsertionPos( 5, y+=10 );
-    if (g_movementFlag) { txtHelper.DrawFormattedTextLine( L"Movement:              On" ); }
-    else { txtHelper.DrawFormattedTextLine( L"Movement:              Off" ); }
-
-    // Print out FOW flag
-    txtHelper.SetInsertionPos( 5, y+=10 );              
-    if (g_fogOfWarFlag) { txtHelper.DrawFormattedTextLine( L"Fog of War:            On" ); }
-    else { txtHelper.DrawFormattedTextLine( L"Fog of War:            Off" ); }
-
-	// Print out Pathfinding Time
-    txtHelper.SetForegroundColor( D3DXCOLOR( 0.0f, 0.0f, 0.0f, 1.0f ) );
-	txtHelper.SetInsertionPos( 5, y+=10 );
-	txtHelper.DrawFormattedTextLine( L"Pathfinding Time: %.2f", g_time.GetStopwatchPathfinding() );
-
-	// Print out Analysis Time
-    txtHelper.SetForegroundColor( D3DXCOLOR( 0.0f, 0.0f, 0.0f, 1.0f ) );
-	txtHelper.SetInsertionPos( 5, y+=10 );
-	txtHelper.DrawFormattedTextLine( L"Analysis Time:      %.2f", g_time.GetStopwatchAnalysis() );
-	*/
 	// Print out states
     txtHelper.SetForegroundColor( D3DXCOLOR( 1.0f, 0.0f, 0.0f, 1.0f ) );
 	dbCompositionList list;
 	g_database.ComposeList( list, OBJECT_Ignore_Type );
-	int starttext = y+=60;
+	int starttext = 80;
 	int count = 0;
 	dbCompositionList::iterator i;
 	for( i=list.begin(); i!=list.end(); ++i )
@@ -968,7 +928,7 @@ void RenderText()
 
     txtHelper.SetForegroundColor( D3DXCOLOR( 1.0f, 1.0f, 0.0f, 1.0f ) );
     txtHelper.SetInsertionPos( 5, 70 );
-
+	
     // We can only display either the behavior text or help text,
     // with the help text having priority.
     if( g_bShowHelp )
@@ -1104,6 +1064,11 @@ LRESULT CALLBACK MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bo
 		}
 		return 0;
 	}
+	if (uMsg == WM_SIZE)
+	{
+		//window resize redraw all the buttoms
+		RedrawButtons();
+	}
 
     // Pass messages to camera class for camera movement if the
     // global camera if active
@@ -1149,191 +1114,8 @@ void CALLBACK OnGUIEvent( UINT nEvent, int nControlID, CDXUTControl* pControl, v
         case IDC_TOGGLEFULLSCREEN: DXUTToggleFullScreen(); break;
         case IDC_TOGGLEREF:        DXUTToggleREF(); break;
         case IDC_CHANGEDEVICE:     g_SettingsDlg.SetActive( !g_SettingsDlg.IsActive() ); break;
-        case IDC_ADDTINY:
-        {
-/*
-            CTiny * pTiny = new CTiny;
-            if( pTiny == NULL )
-                break;
+        case IDC_ADDTINY:	
 
-            if( SUCCEEDED( pTiny->Setup( & g_MultiAnim, & g_v_pCharacters, & g_DSound, DXUTGetGlobalTimer()->GetTime() ) ) )
-                pTiny->SetSounds( g_bPlaySounds );
-            else
-                delete pTiny;
-            break;
-*/
-        }
-
-			
-/*      case IDC_NEXTMAP:
-			g_terrain.NextMap();
-			break;
-
-		case IDC_TOGGLECAM:
-			g_frontCam = !g_frontCam;
-			if( g_frontCam )
-			{
-				D3DXVECTOR3 vEye( .5f, .55f, -.4f );
-				D3DXVECTOR3 vAt( .5f,  -.125f, .5f );
-				g_Camera.SetViewParams( &vEye, &vAt );
-			}
-			else
-			{
-				D3DXVECTOR3 vEye( .5f, 1.0f, .4f );
-				D3DXVECTOR3 vAt( .5f,  -.10f, .5f );
-				g_Camera.SetViewParams( &vEye, &vAt );
-			}
-			break;
-
-		case IDC_TOGGLEHEURISTICWEIGHT:
-			if( g_heuristicWeight == 0.0f )			{ g_heuristicWeight = 1.0f; }
-			else if( g_heuristicWeight == 1.0f )	{ g_heuristicWeight = 1.01f; }
-			else if( g_heuristicWeight == 1.01f )	{ g_heuristicWeight = 1.2f; }
-			else if( g_heuristicWeight == 1.2f )	{ g_heuristicWeight = 1.5f; }
-			else if( g_heuristicWeight == 1.5f )	{ g_heuristicWeight = 2.0f; }
-			else									{ g_heuristicWeight = 0.0f; }
-			g_database.SendMsgFromSystem( MSG_SetHeuristicWeight, MSG_Data( g_heuristicWeight ) );
-			break;
-
-		case IDC_TOGGLEHEURISTIC:
-			if( g_heuristicCalc == 0 )				{ g_heuristicCalc = 1; }
-			else if( g_heuristicCalc == 1 )			{ g_heuristicCalc = 2; }
-			else if( g_heuristicCalc == 2 )			{ g_heuristicCalc = 3; }
-			else									{ g_heuristicCalc = 0; }
-			g_database.SendMsgFromSystem( MSG_SetHeuristicCalc, MSG_Data( g_heuristicCalc ) );
-			break;
-
-		case IDC_TOGGLESMOOTHING:
-			g_smoothing = !g_smoothing;
-			g_database.SendMsgFromSystem( MSG_SetSmoothing, MSG_Data( g_smoothing ) );
-			break;
-
-		case IDC_TOGGLERUBBERBANDING:
-			g_rubberbanding = !g_rubberbanding;
-			g_database.SendMsgFromSystem( MSG_SetRubberbanding, MSG_Data( g_rubberbanding ) );
-			break;
-
-		case IDC_TOGGLESTRAIGHTLINE:
-			g_straightline = !g_straightline;
-			g_database.SendMsgFromSystem( MSG_SetStraightline, MSG_Data( g_straightline ) );
-			break;
-
-		case IDC_TOGGLEANALYSIS:
-			g_terrain.IncTerrainAnalysis();
-			break;
-
-		case IDC_TOGGLEASTARUSESANALYSIS:
-			g_aStarUsesAnalysis = !g_aStarUsesAnalysis;
-			g_database.SendMsgFromSystem( MSG_SetAStarUsesAnalysis, MSG_Data( g_aStarUsesAnalysis ) );
-			break;
-
-		case IDC_TOGGLEAGENTSPEED:
-			if(g_animStyle == 0)		{ g_animStyle = 1; }
-			else if(g_animStyle == 1)	{ g_animStyle = 0; }
-			g_database.SendMsgFromSystem( MSG_SetAgentSpeed, MSG_Data( g_animStyle ) );
-			break;
-
-		case IDC_TOGGLESINGLESTEP:
-			g_singleStep = !g_singleStep;
-			g_database.SendMsgFromSystem( MSG_SetSingleStep, MSG_Data( g_singleStep ) );
-			break;
-
-        case IDC_NEXTVIEW:
-            if( g_v_pCharacters.size() != 0 )
-            {
-                if( g_dwFollow == 0xffffffff )
-                    g_dwFollow = 0;
-                else if( g_dwFollow == (DWORD) g_v_pCharacters.size() - 1 )
-                    g_dwFollow = 0xffffffff;
-                else
-                    ++g_dwFollow;
-
-                if( g_dwFollow == 0xffffffff )
-                {
-                    //g_SampleUI.GetCheckBox( IDC_CONTROLTINY )->SetEnabled( false );
-                    //g_SampleUI.GetCheckBox( IDC_CONTROLTINY )->SetVisible( false );
-                } else
-                {
-                    //g_SampleUI.GetCheckBox( IDC_CONTROLTINY )->SetEnabled( true );
-                    //g_SampleUI.GetCheckBox( IDC_CONTROLTINY )->SetVisible( true );
-                    //g_SampleUI.GetCheckBox( IDC_CONTROLTINY )->SetChecked( g_v_pCharacters[g_dwFollow]->IsUserControl() );
-                }
-            }
-            break;
-
-        case IDC_PREVVIEW:
-            if( g_v_pCharacters.size() != 0 )
-            {
-                if( g_dwFollow == 0xffffffff )
-                    g_dwFollow = (DWORD) g_v_pCharacters.size() - 1;
-                else if( g_dwFollow == 0 )
-                    g_dwFollow = 0xffffffff;
-                else
-                    --g_dwFollow;
-
-                if( g_dwFollow == 0xffffffff )
-                {
-                    //g_SampleUI.GetCheckBox( IDC_CONTROLTINY )->SetEnabled( false );
-                    //g_SampleUI.GetCheckBox( IDC_CONTROLTINY )->SetVisible( false );
-                } else
-                {
-                    //g_SampleUI.GetCheckBox( IDC_CONTROLTINY )->SetEnabled( true );
-                    //g_SampleUI.GetCheckBox( IDC_CONTROLTINY )->SetVisible( true );
-                    //g_SampleUI.GetCheckBox( IDC_CONTROLTINY )->SetChecked( g_v_pCharacters[g_dwFollow]->IsUserControl() );
-                }
-            }
-            break;
-
-        case IDC_RESETCAMERA:
-            g_dwFollow = 0xffffffff;
-            //g_SampleUI.GetCheckBox( IDC_CONTROLTINY )->SetEnabled( false );
-            //g_SampleUI.GetCheckBox( IDC_CONTROLTINY )->SetVisible( false );
-            break;
-
-        case IDC_ENABLESOUND:
-        {
-            g_bPlaySounds = ((CDXUTCheckBox*)pControl)->GetChecked();
-            vector< CTiny* >::iterator itCur, itEnd = g_v_pCharacters.end();
-            for( itCur = g_v_pCharacters.begin(); itCur != itEnd; ++ itCur )
-                ( * itCur )->SetSounds( g_bPlaySounds );
-            break;
-        }
-
-        case IDC_CONTROLTINY:
-            break;
-
-        case IDC_RELEASEALL:
-            break;
-
-        case IDC_RESETTIME:
-        {
-            DXUTGetGlobalTimer()->Reset();
-            g_fLastAnimTime = DXUTGetGlobalTimer()->GetTime();
-            vector< CTiny* >::iterator itCur, itEnd = g_v_pCharacters.end();
-            for( itCur = g_v_pCharacters.begin(); itCur != itEnd; ++ itCur )
-                ( * itCur )->ResetTime();
-            break;
-        }
-
-        case IDC_TOGGLEMOVEMENT:
-            g_movementFlag = !g_movementFlag;
-			g_database.SendMsgFromSystem( MSG_SetMoving, MSG_Data( g_movementFlag ) );
-            break;
-
-        case IDC_RUNTIMINGSSHORT:
-            g_database.SendMsgFromSystem( MSG_RunTimingsShort );
-            break;
-
-        case IDC_RUNTIMINGSLONG:
-            g_database.SendMsgFromSystem( MSG_RunTimingsLong );
-            break;
-
-        case IDC_TOGGLEFOW:
-            g_fogOfWarFlag = !g_fogOfWarFlag;
-            g_terrain.InitFogOfWar();
-            g_database.SendMsgFromSystem( MSG_SetFogOfWar, MSG_Data( g_fogOfWarFlag ) );
-            break;
-*/
 case IDC_PUNISH:
 	if (g_punish == 0.0f)		{ g_punish = 1.0f; }
 	else if (g_punish == 1.0f)	{ g_punish = 1.2f;}
@@ -1467,4 +1249,64 @@ void CALLBACK OnDestroyDevice( void* pUserContext )
 
 	//delete g_pWorld;
     g_pWorld->InvalidateDeviceObjects();
+}
+
+void  RedrawButtons()
+{
+	LPRECT winRect = new RECT;
+	GetWindowRect(DXUTGetHWND(), winRect);
+
+	long winMidHor = (winRect->left + winRect->right) / 2 - winRect->left;
+	long winMidVer = (winRect->bottom + winRect->top) / 2 - winRect->top;
+	long winWidth = winRect->right - winRect->left;
+	long winHeight = winRect->top - winRect->bottom;
+
+	g_SampleUI.RemoveAllControls();
+	g_SampleUI.Init(&g_DialogResourceManager);
+	
+	int gapVer = (int)(-winHeight*0.1);
+	int iY = (int)(-winHeight*0.02);
+	int bBW = (int)(winWidth*0.09);	//button width
+	int bBH = (int)(winHeight*(-0.046));	//button height
+	int sBHorOffset1 = (int)(winWidth / 2 * 0.25);
+	int sBHorOffset2 = (int)(winWidth / 2 * 0.435);
+	g_SampleUI.SetCallback(OnGUIEvent); 
+	int rightSide = 170;
+
+	g_SampleUI.AddButton(IDC_PUNISH, L"Punish", rightSide - (int)(2.05*bBW), iY, bBW, bBH);
+//	printf("%d\n", 2 * bBW);
+	g_SampleUI.AddButton(IDC_REWARD, L"Reward", rightSide - bBW, iY, bBW, bBH);
+
+	g_SampleUI.AddButton(IDC_LOOP_1000, L"1000", rightSide - (int)(2.05*bBW), iY += gapVer, bBW, bBH);
+	g_SampleUI.AddButton(IDC_LOOP_3000, L"3000", rightSide - bBW, iY, bBW, bBH);
+
+	g_SampleUI.AddButton(IDC_LOOP_5000, L"5000", rightSide - (int)(2.05*bBW), iY += (int)(gapVer / 2), bBW, bBH);
+	g_SampleUI.AddButton(IDC_LOOP_10000, L"10000", rightSide - bBW, iY, bBW, bBH);
+
+	g_SampleUI.AddButton(IDC_METHOD_QL, L"Q-Learning", rightSide - (int)(2.05*bBW), iY += gapVer, bBW, bBH);
+	g_SampleUI.AddButton(IDC_METHOD_SARSA, L"SARSA", rightSide - bBW, iY, bBW, bBH);
+
+	bBW = (int)(winWidth*0.18);	//button width
+	bBH = (int)(winHeight*(-0.092));	//button height
+
+	g_SampleUI.AddButton(IDC_START_TRAINING, L"Start training", rightSide - (int)(1.05*bBW), iY += gapVer, bBW, bBH);
+
+	g_SampleUI.AddButton(IDC_RESET, L"Reset", rightSide - (int)(1.05*bBW), iY += gapVer * 2, bBW, bBH);
+	g_SampleUI.AddButton(IDC_START_PLAYING, L"Start playing", rightSide - (int)(1.05*bBW), iY += gapVer, bBW, bBH);
+
+
+	int sBVerOffset = (int)(winHeight / 2 * 0.78);
+	int sBHorOffset = (int)(winWidth / 2 * 0.25);
+	int sBW = (int)(winWidth*0.1);			//speed button width
+	int sBH = (int)(winHeight*(-0.03));	//speed button height
+	
+	int magicNumber = 130;
+	g_SampleUI.AddButton(IDC_SPEED_SLOW, L"Slow", -(winMidHor - sBHorOffset - magicNumber), winMidVer - sBVerOffset, sBW, sBH);
+	g_SampleUI.AddButton(IDC_SPEED_MEDIUM, L"Medium", -(winMidHor - magicNumber), winMidVer - sBVerOffset, sBW, sBH);
+	g_SampleUI.AddButton(IDC_SPEED_FAST, L"Fast", -(winMidHor + sBHorOffset - magicNumber), winMidVer - sBVerOffset, sBW, sBH);
+
+	sBHorOffset = (int)(winWidth / 2 * 0.50);
+	g_SampleUI.AddButton(IDC_SPEED_SUPERSLOW, L"Super slow", -(winMidHor - sBHorOffset - magicNumber), winMidVer - sBVerOffset, sBW, sBH);
+	g_SampleUI.AddButton(IDC_SPEED_TURBO, L"Turbo", -(winMidHor + sBHorOffset - magicNumber), winMidVer - sBVerOffset, sBW, sBH);
+	
 }

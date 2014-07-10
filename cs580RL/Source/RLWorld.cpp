@@ -333,4 +333,12 @@ void RLWorld::DrawRLState(bool teleport)
 	g_terrain.SetColor(chx,chy, DEBUG_COLOR_BLUE);
 }
 
+int RLWorld::returnCatScore()
+{
+	return catScores;
+}
 
+int RLWorld::returnMouseScore()
+{
+	return mouseScores;
+}

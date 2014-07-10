@@ -15,10 +15,6 @@ public:
 	RLWorld();
 	~RLWorld();
 
-    // TODO: Make these private.
-    vector<int> stateArray;
-    int catScores, mouseScores;	//keep the score
-
 	float           GetReward();
 	vector<int>&    GetNextState(int action);
 	vector<int>&    GetCurrentState();
@@ -28,10 +24,15 @@ public:
     bool            EndState();
     void            DrawRLState(bool teleport);
 
+	int returnCatScore();
+	int returnMouseScore();
+
 	void SetRewardVal(float reward) { currentReward = reward; }
 	void SetPunishVal(float punish) { currentPunish = punish; }
 
 private:
+	vector<int> stateArray;
+	int catScores, mouseScores;	//keep the score
     void    InitialValue();
     void    LoadMapInfo();
     float   CalcReward();	    //calculate reward(waiting reward)
