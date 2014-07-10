@@ -5,6 +5,7 @@
 
 extern unsigned int	g_catWin;
 extern unsigned int	g_mouseWin;
+extern unsigned int g_trainingStatus;
 
 static const int cSpeedSuperSlow  = -16;
 static const int cSpeedSlow       = -4;
@@ -81,6 +82,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
             m_learningMethod = LearningMethod::Q_LEARNING;
             m_iterationsPerFrame = cSpeedMedium;
             m_RLearner.SetRunning(false);
+            g_trainingStatus = 0;
             ChangeState(STATE_Waiting);
 
 
@@ -127,6 +129,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
             m_RLearner.getWorld().ResetGame();
             iterations = 0;
             intermediateIterations = 0;
+            g_trainingStatus = 1;
 
         OnUpdate
 
@@ -170,6 +173,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                     m_learningWorld.DrawRLState(true);
 
                     m_RLearner.SetRunning(false);
+                    g_trainingStatus = 2;
                     ChangeState(STATE_Waiting);
                 }
                 else

@@ -75,7 +75,7 @@ int						g_trainloop     = 1000;		            // Default loop time
 bool					g_useQR         = true;			        // Default use Q-Learing
 RLSpeed					g_RLspeed       = RLSpeed::Medium;      // Default speed(single step)
 int						g_cureIteration = 0;					// Current iteration
-int						g_trainingStatus= 0;					// Training status info(such as waiting, training, complete, get from somewhere)
+unsigned int			g_trainingStatus= 0;					// Training status info(such as waiting, training, complete, get from somewhere)
 
 unsigned int			g_catWin = 0;				
 unsigned int			g_mouseWin = 0;
@@ -856,29 +856,40 @@ void RenderText()
 	//print training status info
 	//Choose the one you like, or both
 	//Method NO.1
-	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
+    txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
 	txtHelper.SetInsertionPos(5, 60);
 	switch (g_trainingStatus)
 	{
-	case 0:
-		txtHelper.DrawFormattedTextLine(L"Training Status:	Waiting");
+    case 0:
+        txtHelper.DrawFormattedTextLine(L"Training Status:");
+        txtHelper.SetInsertionPos(105, 60);
+        txtHelper.DrawFormattedTextLine(L"Waiting.");
 		break;
-	case 1:
-		txtHelper.DrawFormattedTextLine(L"Training Status:	Training");
+    case 1:
+        txtHelper.DrawFormattedTextLine(L"Training Status:");
+        txtHelper.SetInsertionPos(105, 60);
+        txtHelper.DrawFormattedTextLine(L"Training...");
 		break;
-	case 2:
-		txtHelper.DrawFormattedTextLine(L"Training Status:	Training complete");
+    case 2:
+        txtHelper.DrawFormattedTextLine(L"Training Status:	");
+        txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f));
+        txtHelper.SetInsertionPos(105, 60);
+        txtHelper.DrawFormattedTextLine(L"Training complete!");
 		break;	
-	default:
-		txtHelper.DrawFormattedTextLine(L"Training Status:	I don't know");
+    default:
+        txtHelper.SetForegroundColor(D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
+        txtHelper.DrawFormattedTextLine(L"Training Status:	");
+        txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f));
+        txtHelper.SetInsertionPos(105, 60);
+        txtHelper.DrawFormattedTextLine(L"I don't know?");
 		break;
 	}
 
 	//Method NO.2
-	txtHelper.SetForegroundColor(D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
-	txtHelper.SetInsertionPos(winMidHor - 60, winMidVer);
-	if (g_trainingStatus)
-		txtHelper.DrawFormattedTextLine(L"Training Complete!!");
+	//txtHelper.SetForegroundColor(D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
+	//txtHelper.SetInsertionPos(winMidHor - 60, winMidVer);
+	//if (g_trainingStatus)
+	//	txtHelper.DrawFormattedTextLine(L"Training Complete!!");
 
 	// Print out states
     txtHelper.SetForegroundColor( D3DXCOLOR( 1.0f, 0.0f, 0.0f, 1.0f ) );
@@ -1266,7 +1277,7 @@ void  RedrawButtons()
 	
 	int gapVer = (int)(-winHeight*0.1);
 	int iY = (int)(-winHeight*0.02);
-	int bBW = (int)(winWidth*0.09);	//button width
+	int bBW = (int)(winWidth*0.09);	        //button width
 	int bBH = (int)(winHeight*(-0.046));	//button height
 	int sBHorOffset1 = (int)(winWidth / 2 * 0.25);
 	int sBHorOffset2 = (int)(winWidth / 2 * 0.435);
