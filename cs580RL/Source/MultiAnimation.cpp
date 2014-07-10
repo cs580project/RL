@@ -1286,8 +1286,8 @@ void  RedrawButtons()
 	g_SampleUI.AddButton(IDC_METHOD_QL, L"Q-Learning", rightSide - (int)(2.05*bBW), iY += gapVer, bBW, bBH);
 	g_SampleUI.AddButton(IDC_METHOD_SARSA, L"SARSA", rightSide - bBW, iY, bBW, bBH);
 
-	bBW = (int)(winWidth*0.18);	//button width
-	bBH = (int)(winHeight*(-0.092));	//button height
+	bBW = (int)(winWidth*0.18);	        // button width
+	bBH = (int)(winHeight*(-0.092));	// button height
 
 	g_SampleUI.AddButton(IDC_START_TRAINING, L"Start training", rightSide - (int)(1.05*bBW), iY += gapVer, bBW, bBH);
 
@@ -1297,16 +1297,16 @@ void  RedrawButtons()
 
 	int sBVerOffset = (int)(winHeight / 2 * 0.78);
 	int sBHorOffset = (int)(winWidth / 2 * 0.25);
-	int sBW = (int)(winWidth*0.1);			//speed button width
-	int sBH = (int)(winHeight*(-0.03));	//speed button height
+	int sBW         = (int)(winWidth*0.1);			// speed button width
+	int sBH         = (int)(winHeight*(-0.03));	    // speed button height
 	
 	int magicNumber = 130;
-	g_SampleUI.AddButton(IDC_SPEED_SLOW, L"Slow", -(winMidHor - sBHorOffset - magicNumber), winMidVer - sBVerOffset, sBW, sBH);
-	g_SampleUI.AddButton(IDC_SPEED_MEDIUM, L"Medium", -(winMidHor - magicNumber), winMidVer - sBVerOffset, sBW, sBH);
-	g_SampleUI.AddButton(IDC_SPEED_FAST, L"Fast", -(winMidHor + sBHorOffset - magicNumber), winMidVer - sBVerOffset, sBW, sBH);
+    g_SampleUI.AddButton(IDC_SPEED_FAST,        L"Fast",    -(winMidHor - sBHorOffset - magicNumber),   winMidVer - sBVerOffset, sBW, sBH);
+    g_SampleUI.AddButton(IDC_SPEED_MEDIUM,      L"Medium",  -(winMidHor - magicNumber),                 winMidVer - sBVerOffset, sBW, sBH);
+	g_SampleUI.AddButton(IDC_SPEED_SLOW,        L"SLOW",    -(winMidHor + sBHorOffset - magicNumber),   winMidVer - sBVerOffset, sBW, sBH);
 
 	sBHorOffset = (int)(winWidth / 2 * 0.50);
-	g_SampleUI.AddButton(IDC_SPEED_SUPERSLOW, L"Super slow", -(winMidHor - sBHorOffset - magicNumber), winMidVer - sBVerOffset, sBW, sBH);
-	g_SampleUI.AddButton(IDC_SPEED_TURBO, L"Turbo", -(winMidHor + sBHorOffset - magicNumber), winMidVer - sBVerOffset, sBW, sBH);
+    g_SampleUI.AddButton(IDC_SPEED_TURBO,       L"Turbo",       -(winMidHor - sBHorOffset - magicNumber), winMidVer - sBVerOffset, sBW, sBH);
+    g_SampleUI.AddButton(IDC_SPEED_SUPERSLOW,   L"Super slow",  -(winMidHor + sBHorOffset - magicNumber), winMidVer - sBVerOffset, sBW, sBH);
 	
 }

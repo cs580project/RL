@@ -10,14 +10,13 @@ static const int cSpeedSuperSlow  = -16;
 static const int cSpeedSlow       = -4;
 static const int cSpeedMedium     = -1;
 static const int cSpeedFast       = 1;
-static const int cSpeedTurbo      = 1000;
+static const int cSpeedTurbo      = 10000;
 
 //Add new states below
 enum StateName {
     STATE_Initialize,	//The first enum is the starting state
     STATE_Waiting,
     STATE_Learning,
-	STATE_LearningWithoutGUI,
     STATE_Playing,
     STATE_EndGame
 };
@@ -110,29 +109,15 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
 
         OnMsg(MSG_StartPlaying)
             ChangeState(STATE_Playing);
-	//////////////////////////////////////////////////////////////
-		DeclareState(STATE_LearningWithoutGUI)
-			OnEnter
-			if (m_RLearner.GetPlaying())
-			{
-				PopState();
-			}
 
-			m_RLearner.getWorld().ResetGame();
-			m_RLearner.SetRunning(true);
-			m_RLearner.RunTraining(m_trainingIterations, m_learningMethod);
-            g_catWin = m_RLearner.getWorld().returnCatScore();
-            g_mouseWin = m_RLearner.getWorld().returnMouseScore();
-			m_RLearner.SetRunning(false);
-			ChangeState(STATE_Waiting);
 
 	///////////////////////////////////////////////////////////////
-        DeclareState(STATE_Learning)
-            DeclareStateInt(iterations)
-            DeclareStateInt(intermediateIterations)
+    DeclareState(STATE_Learning)
+
+        DeclareStateInt(iterations)
+        DeclareStateInt(intermediateIterations)
 
         OnEnter
-
             if (m_RLearner.GetPlaying())
             {
                 PopState();
@@ -155,10 +140,10 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                 {
                     intermediateIterations = 0;
 
-					m_RLearner.RunTraining(1, m_learningMethod);
+                    m_RLearner.RunTraining(1, m_learningMethod);
                     ++iterations;
 
-                    g_catWin = m_RLearner.getWorld().returnCatScore();
+                    g_catWin   = m_RLearner.getWorld().returnCatScore();
                     g_mouseWin = m_RLearner.getWorld().returnMouseScore();
 
                     // Signal "teleport"
@@ -175,18 +160,21 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
 
                 if (potentialIterations >= m_trainingIterations)
                 {
-					m_RLearner.RunTraining(potentialIterations - m_trainingIterations, m_learningMethod);
+                    m_RLearner.RunTraining(m_trainingIterations - (potentialIterations - m_trainingIterations), m_learningMethod);
 
                     // TODO: Signal completion of learning algorithm
 					g_catWin = m_RLearner.getWorld().returnCatScore();
 					g_mouseWin = m_RLearner.getWorld().returnMouseScore();
+
+                    // Signal "teleport"
+                    m_learningWorld.DrawRLState(true);
 
                     m_RLearner.SetRunning(false);
                     ChangeState(STATE_Waiting);
                 }
                 else
                 {
-					m_RLearner.RunTraining(m_iterationsPerFrame, m_learningMethod);
+                    m_RLearner.RunTraining(m_iterationsPerFrame, m_learningMethod);
 
                     iterations += m_iterationsPerFrame;
 
@@ -200,9 +188,9 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
 
 
 	///////////////////////////////////////////////////////////////
-		DeclareState(STATE_Playing)
+	DeclareState(STATE_Playing)
 
-            DeclareStateBool(StartPos)
+        DeclareStateBool(StartPos)
 
 		OnEnter
             if (m_RLearner.GetRunning())
@@ -214,7 +202,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
 			m_RLearner.SetPlaying(true);
 			m_learningWorld.ResetState(); // Resets starting positions.
 
-		OnPeriodicTimeInState(0.4)
+		OnPeriodicTimeInState(0.4f)
 		    if (m_learningWorld.EndState())
 		    {
 			    ChangeState(STATE_Waiting);
