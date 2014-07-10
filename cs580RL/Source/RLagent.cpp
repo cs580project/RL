@@ -77,14 +77,24 @@ bool RLAgent::States( State_Machine_Event event, MSG_Object * msg, int state, in
 	///////////////////////////////////////////////////////////////
     DeclareState(STATE_Moving)
 
+        DeclareStateBool(lastJogging)
+
         OnEnter
-            if (m_jogging)
+            lastJogging = !m_jogging;
+
+        OnUpdate
+            if (lastJogging != m_jogging)
             {
-                m_owner->GetMovement().SetJogSpeed();
-            }
-            else
-            {
-                m_owner->GetMovement().SetWalkSpeed();
+                lastJogging = m_jogging;
+
+                if (m_jogging)
+                {
+                    m_owner->GetMovement().SetJogSpeed();
+                }
+                else
+                {
+                    m_owner->GetMovement().SetWalkSpeed();
+                }
             }
 
         OnMsg(MSG_AddNewWaypoint)
