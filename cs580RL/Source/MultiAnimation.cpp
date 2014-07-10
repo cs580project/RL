@@ -807,7 +807,7 @@ void RenderText()
 	g_cureIteration = g_catWin + g_mouseWin;
 	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
 	txtHelper.SetInsertionPos(winRect->right - winRect->left - (int)(2.05*bBW), y += (int)(bBH*1.75));
-	txtHelper.DrawFormattedTextLine(L"Iterations:%d", g_cureIteration);
+	txtHelper.DrawFormattedTextLine(L"Epochs:%d", g_cureIteration);
 
 	//print train time
 	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
@@ -1303,7 +1303,7 @@ void  RedrawButtons()
 	int magicNumber = 130;
     g_SampleUI.AddButton(IDC_SPEED_FAST,        L"Fast",    -(winMidHor - sBHorOffset - magicNumber),   winMidVer - sBVerOffset, sBW, sBH);
     g_SampleUI.AddButton(IDC_SPEED_MEDIUM,      L"Medium",  -(winMidHor - magicNumber),                 winMidVer - sBVerOffset, sBW, sBH);
-	g_SampleUI.AddButton(IDC_SPEED_SLOW,        L"SLOW",    -(winMidHor + sBHorOffset - magicNumber),   winMidVer - sBVerOffset, sBW, sBH);
+	g_SampleUI.AddButton(IDC_SPEED_SLOW,        L"Slow",    -(winMidHor + sBHorOffset - magicNumber),   winMidVer - sBVerOffset, sBW, sBH);
 
 	sBHorOffset = (int)(winWidth / 2 * 0.50);
     g_SampleUI.AddButton(IDC_SPEED_TURBO,       L"Turbo",       -(winMidHor - sBHorOffset - magicNumber), winMidVer - sBVerOffset, sBW, sBH);
