@@ -190,7 +190,8 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
 	///////////////////////////////////////////////////////////////
 	DeclareState(STATE_Playing)
 
-        DeclareStateBool(StartPos)
+        DeclareStateBool(startPos)
+        DeclareStateFloat(elapsedTime)
 
 		OnEnter
             if (m_RLearner.GetRunning())
@@ -198,31 +199,87 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                 PopState();
             }
 
-            StartPos = true;
+            if (m_iterationsPerFrame < cSpeedMedium)
+            {
+                g_database.SendMsgFromSystem(10, MSG_SetAgentSpeed, MSG_Data(false));
+                g_database.SendMsgFromSystem(11, MSG_SetAgentSpeed, MSG_Data(false));
+            }
+            else if (m_iterationsPerFrame < cSpeedFast)
+            {
+                g_database.SendMsgFromSystem(10, MSG_SetAgentSpeed, MSG_Data(true));
+                g_database.SendMsgFromSystem(11, MSG_SetAgentSpeed, MSG_Data(true));
+            }
+            else
+            {
+                // TODO: Iterations per frame
+            }
+
+            startPos = true;
+            elapsedTime = 0.f;
 			m_RLearner.SetPlaying(true);
 			m_learningWorld.ResetState(); // Resets starting positions.
 
-		OnPeriodicTimeInState(0.4f)
+		OnUpdate
 
-		    if (m_learningWorld.EndState())
-		    {
-			    ChangeState(STATE_Waiting);
-		    }
+            static const float cWalkSpeed       = 0.4f;
+            static const float cJogSpeed        = 0.15f;
+            static const float cTeleportSpeed   = 0.0f;
+
+            float waitTime;
+            if (m_iterationsPerFrame < cSpeedMedium)
+            {
+                waitTime = cWalkSpeed;
+            }
+            else if (m_iterationsPerFrame < cSpeedFast)
+            {
+                waitTime = cJogSpeed;
+            }
+            else if (m_iterationsPerFrame < cSpeedTurbo)
+            {
+                waitTime = cTeleportSpeed;
+            }
             else
             {
-                int action = m_RLearner.SelectAction(m_learningWorld.GetCurrentState());
+                // TODO: iterations per frame
+            }
+            
+            elapsedTime += g_time.GetElapsedTime();
 
-                m_learningWorld.GetNextState(action);
+            if (elapsedTime > waitTime)
+            {
+                elapsedTime -= waitTime;
 
-                // Add waypoints
-                m_learningWorld.DrawRLState(StartPos);
-                
-                if (StartPos)
+                if (m_learningWorld.EndState())
                 {
-                    StartPos = false;
+                    ChangeState(STATE_Waiting);
+                }
+                else
+                {
+                    int action = m_RLearner.SelectAction(m_learningWorld.GetCurrentState());
+
+                    m_learningWorld.GetNextState(action);
+
+                    if (m_iterationsPerFrame < cSpeedFast)
+                    {
+                        // Add waypoints
+                        m_learningWorld.DrawRLState(startPos);
+                    }
+                    else if (m_iterationsPerFrame < cSpeedTurbo)
+                    {
+                        // Teleport instantly
+                        m_learningWorld.DrawRLState(true);
+                    }
+                    else
+                    {
+                        // TODO: iterations per frame
+                    }
+
+                    if (startPos)
+                    {
+                        startPos = false;
+                    }
                 }
             }
-
 
     EndStateMachine
 }

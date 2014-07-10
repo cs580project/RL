@@ -28,17 +28,20 @@ bool RLAgent::States( State_Machine_Event event, MSG_Object * msg, int state, in
 
     BeginStateMachine
 
-
 	//Global message response section
 	OnMsg( MSG_Reset )
 		ResetStateMachine();
         ChangeState(STATE_Initialize);
 
-    OnMsg(MSG_Teleport)
+    OnMsg( MSG_Teleport )
+        m_owner->GetMovement().ResetPath();
         int r = msg->GetVector2Data().x; 
 	    int c = msg->GetVector2Data().y;
         D3DXVECTOR3 coords = g_terrain.GetCoordinates(r, c);
         m_owner->GetBody().SetPos(coords);
+        
+    OnMsg( MSG_SetAgentSpeed )
+        m_jogging = msg->GetBoolData();
 
 // #define DEBUG_THE_RL_AGENT
 #ifdef DEBUG_THE_RL_AGENT
@@ -75,7 +78,14 @@ bool RLAgent::States( State_Machine_Event event, MSG_Object * msg, int state, in
     DeclareState(STATE_Moving)
 
         OnEnter
-            m_owner->GetMovement().SetWalkSpeed();
+            if (m_jogging)
+            {
+                m_owner->GetMovement().SetJogSpeed();
+            }
+            else
+            {
+                m_owner->GetMovement().SetWalkSpeed();
+            }
 
         OnMsg(MSG_AddNewWaypoint)
             int r = msg->GetVector2Data().x; 
