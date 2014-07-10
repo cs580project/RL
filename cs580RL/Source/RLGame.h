@@ -24,6 +24,8 @@ public:
 private:
     virtual bool States(State_Machine_Event event, MSG_Object * msg, int state, int substate);
 
+    void ChangeAgentSpeeds();
+
 	RLearner        m_RLearner;
 	RLWorld         m_learningWorld;
 
