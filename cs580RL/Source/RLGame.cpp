@@ -160,7 +160,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
 
                 if (potentialIterations >= m_trainingIterations)
                 {
-                    m_RLearner.RunTraining(m_trainingIterations - (potentialIterations - m_trainingIterations), m_learningMethod);
+                    m_RLearner.RunTraining(m_trainingIterations - iterations, m_learningMethod);
 
                     // TODO: Signal completion of learning algorithm
 					g_catWin = m_RLearner.getWorld().returnCatScore();
@@ -203,6 +203,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
 			m_learningWorld.ResetState(); // Resets starting positions.
 
 		OnPeriodicTimeInState(0.4f)
+
 		    if (m_learningWorld.EndState())
 		    {
 			    ChangeState(STATE_Waiting);
