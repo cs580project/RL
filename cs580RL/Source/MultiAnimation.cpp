@@ -79,6 +79,8 @@ unsigned int			g_trainingStatus= 0;					// Training status info(such as waiting,
 
 unsigned int			g_catWin = 0;				
 unsigned int			g_mouseWin = 0;
+unsigned int			g_trainCatWin = 0;
+unsigned int			g_trainMouseWin = 0;
 
 D3DXVECTOR3				g_click2D;
 D3DXVECTOR3				g_click3D;
@@ -98,7 +100,6 @@ D3DXVECTOR3				g_click3D;
 #define IDC_RELEASEALL          10
 #define IDC_RESETCAMERA         11
 #define IDC_RESETTIME           12
-#define IDC_NEXTMAP             13
 #define IDC_TOGGLECAM			14
 #define IDC_TOGGLEHEURISTICWEIGHT	15
 #define IDC_TOGGLEHEURISTIC		16
@@ -114,6 +115,7 @@ D3DXVECTOR3				g_click3D;
 #define IDC_RUNTIMINGSLONG      26
 #define IDC_TOGGLEFOW           27
 
+#define IDC_NEXTMAP             13
 #define IDC_PUNISH 28
 #define IDC_REWARD 29
 #define IDC_LOOP_1000 30
@@ -123,14 +125,14 @@ D3DXVECTOR3				g_click3D;
 #define IDC_METHOD_QL 34
 #define IDC_METHOD_SARSA 35
 #define IDC_START_TRAINING 36
-#define IDC_RESET 37
+#define IDC_RESET_RL 37
 #define IDC_START_PLAYING 38
 #define IDC_SPEED_SUPERSLOW 39
 #define IDC_SPEED_SLOW 40
 #define IDC_SPEED_MEDIUM 41
 #define IDC_SPEED_FAST 42
 #define IDC_SPEED_TURBO 43
-
+#define IDC_CLEAR_SCORE 44
 
 //--------------------------------------------------------------------------------------
 // Forward declarations
@@ -276,7 +278,7 @@ void InitApp()
 
 	g_SampleUI.AddButton(IDC_START_TRAINING, L"Start training", 40, iY += 52, 120, 48);
 
-	g_SampleUI.AddButton(IDC_RESET, L"Reset", 40, iY += 100, 120, 48);
+	g_SampleUI.AddButton(IDC_RESET_RL, L"Reset", 40, iY += 100, 120, 48);
 	g_SampleUI.AddButton(IDC_START_PLAYING, L"Start playing", 40, iY += 52, 120, 48);
 
 	g_SampleUI.AddButton(IDC_SPEED_SUPERSLOW, L"Super slow", -(winMidVer + 30), iY += 140, 70, 16);
@@ -800,22 +802,31 @@ void RenderText()
 	//Print on Cat&Mouse win
 	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
 	txtHelper.SetInsertionPos(winMidHor - 125, y);
-	txtHelper.DrawFormattedTextLine(L"CAT:             %d              MOUSE:             %d", g_catWin, g_mouseWin);
+	txtHelper.DrawFormattedTextLine(L"CAT/Train:         %d", g_trainCatWin);
+	
+	txtHelper.SetInsertionPos(winMidHor, y);
+	txtHelper.DrawFormattedTextLine(L"MOUSE/Train:         %d", g_trainMouseWin);
+	//Print on Cat&Mouse win
+	txtHelper.SetInsertionPos(winMidHor - 125, y+=13);
+	txtHelper.DrawFormattedTextLine(L"CAT:                   %d", g_catWin);
+	txtHelper.SetInsertionPos(winMidHor, y);
+	txtHelper.DrawFormattedTextLine(L"MOUSE                     %d", g_mouseWin);
 
-	//y += 35;
+	//y += 35;int bBH = (int)(winHeight*(-0.092));	//button height
 	//print current iteration
 	g_cureIteration = g_catWin + g_mouseWin;
+
 	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
-	txtHelper.SetInsertionPos(winRect->right - winRect->left - (int)(2.05*bBW), y += (int)(bBH*1.75));
+
+	txtHelper.SetInsertionPos(winRect->right - winRect->left - (int)(2.05*bBW), y += (int)(winHeight*(-0.086)*1.75));
+
 	txtHelper.DrawFormattedTextLine(L"Epochs:%d", g_cureIteration);
 
 	//print train time
-	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
 	txtHelper.SetInsertionPos(winRect->right - winRect->left - (int)(2.05*bBW), y += (int)(bBH*3.5));
 	txtHelper.DrawFormattedTextLine(L"LOOP:%d", g_trainloop);
 
 	//print method
-	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
 	txtHelper.SetInsertionPos(winRect->right - winRect->left - (int)(2.05*bBW), y += (int)(bBH * 2));
 	if (g_useQR)
 		txtHelper.DrawFormattedTextLine(L"Current:Q-Learning");
@@ -823,7 +834,6 @@ void RenderText()
 		txtHelper.DrawFormattedTextLine(L"Current:SARSA");
 
 	//print punish and reward
-	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
 	txtHelper.SetInsertionPos(5, 5);
 	txtHelper.DrawFormattedTextLine(L"Punish:%f", g_punish);
 	txtHelper.SetInsertionPos(5, 20);
@@ -831,7 +841,6 @@ void RenderText()
 
 
 	//print speed info
-	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
 	txtHelper.SetInsertionPos(5, 40);
 	switch (g_RLspeed)
 	{
@@ -1127,6 +1136,11 @@ void CALLBACK OnGUIEvent( UINT nEvent, int nControlID, CDXUTControl* pControl, v
         case IDC_CHANGEDEVICE:     g_SettingsDlg.SetActive( !g_SettingsDlg.IsActive() ); break;
         case IDC_ADDTINY:	
 
+		case IDC_NEXTMAP:
+			g_terrain.NextMap();
+			break;
+
+
 case IDC_PUNISH:
 	if (g_punish == 0.0f)		{ g_punish = 1.0f; }
 	else if (g_punish == 1.0f)	{ g_punish = 1.2f;}
@@ -1134,7 +1148,6 @@ case IDC_PUNISH:
 	else if (g_punish == 1.5f)	{ g_punish = 2.0f; }
 	else						{ g_punish = 0.0f; }
 	g_database.SendMsgFromSystem(MSG_SetPunish, MSG_Data(g_punish));
-	g_terrain.NextMap();
 	break;
 
 case IDC_REWARD:
@@ -1169,8 +1182,16 @@ case IDC_METHOD_SARSA:
 	g_useQR = false;
 	g_database.SendMsgFromSystem(MSG_SetMethod_UseQL, MSG_Data(g_useQR));
 	break;
-case IDC_RESET:
+case IDC_RESET_RL:
     // TODO: Add stop/reset capability
+	g_database.SendMsgFromSystem(MSG_ResetLearner);
+	break;
+case IDC_CLEAR_SCORE:
+	g_catWin = 0;
+	g_mouseWin = 0;
+	g_trainCatWin = 0;
+	g_trainMouseWin = 0;
+	g_database.SendMsgFromSystem(MSG_ClearScores);
 	break;
 case IDC_START_TRAINING:
     g_database.SendMsgFromSystem(MSG_StartLearning, MSG_Data(g_useQR));
@@ -1277,15 +1298,20 @@ void  RedrawButtons()
 	
 	int gapVer = (int)(-winHeight*0.1);
 	int iY = (int)(-winHeight*0.02);
-	int bBW = (int)(winWidth*0.09);	        //button width
-	int bBH = (int)(winHeight*(-0.046));	//button height
+
 	int sBHorOffset1 = (int)(winWidth / 2 * 0.25);
 	int sBHorOffset2 = (int)(winWidth / 2 * 0.435);
 	g_SampleUI.SetCallback(OnGUIEvent); 
 	int rightSide = 170;
 
-	g_SampleUI.AddButton(IDC_PUNISH, L"Punish", rightSide - (int)(2.05*bBW), iY, bBW, bBH);
-//	printf("%d\n", 2 * bBW);
+	int bBW = (int)(winWidth*0.18);	//button width
+	int bBH = (int)(winHeight*(-0.092));	//button height
+	g_SampleUI.AddButton(IDC_NEXTMAP, L"Next Map", rightSide - (int)(1.02*bBW), iY, bBW, bBH);
+
+	bBW = (int)(winWidth*0.09);	//button width
+	bBH = (int)(winHeight*(-0.046));	//button height
+	
+	g_SampleUI.AddButton(IDC_PUNISH, L"Punish", rightSide - (int)(2.05*bBW), iY += gapVer, bBW, bBH);
 	g_SampleUI.AddButton(IDC_REWARD, L"Reward", rightSide - bBW, iY, bBW, bBH);
 
 	g_SampleUI.AddButton(IDC_LOOP_1000, L"1000", rightSide - (int)(2.05*bBW), iY += gapVer, bBW, bBH);
@@ -1300,10 +1326,11 @@ void  RedrawButtons()
 	bBW = (int)(winWidth*0.18);	        // button width
 	bBH = (int)(winHeight*(-0.092));	// button height
 
-	g_SampleUI.AddButton(IDC_START_TRAINING, L"Start training", rightSide - (int)(1.05*bBW), iY += gapVer, bBW, bBH);
+	g_SampleUI.AddButton(IDC_START_TRAINING, L"Start training", rightSide - (int)(1.02*bBW), iY += gapVer, bBW, bBH);
 
-	g_SampleUI.AddButton(IDC_RESET, L"Reset", rightSide - (int)(1.05*bBW), iY += gapVer * 2, bBW, bBH);
-	g_SampleUI.AddButton(IDC_START_PLAYING, L"Start playing", rightSide - (int)(1.05*bBW), iY += gapVer, bBW, bBH);
+	g_SampleUI.AddButton(IDC_RESET_RL, L"Reset Learner", rightSide - (int)(1.02*bBW), iY += (int)(gapVer * 1.4), bBW, bBH/2);
+	g_SampleUI.AddButton(IDC_CLEAR_SCORE, L"Clear Scores", rightSide - (int)(1.02*bBW), iY += gapVer/2, bBW, bBH/2);
+	g_SampleUI.AddButton(IDC_START_PLAYING, L"Start playing", rightSide - (int)(1.02*bBW), iY += gapVer/2, bBW, bBH);
 
 
 	int sBVerOffset = (int)(winHeight / 2 * 0.78);
