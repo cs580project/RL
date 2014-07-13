@@ -57,7 +57,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
         m_RLearner.GetPolicy().resetToDefault();
         m_RLearner.getWorld().ResetAllButScores();
         g_trainingStatus = 0;
-        ChangeState(STATE_Waiting);
+        //ChangeState(STATE_Waiting);
 
 
     OnMsg(MSG_ClearScores)
