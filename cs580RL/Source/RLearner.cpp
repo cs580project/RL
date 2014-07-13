@@ -66,10 +66,10 @@ void RLearner::QLearning()
 
 		thisQ   = m_policy.getQValue(state, action);
         
-        if (reward != 0)
-        {
-            reward = reward;
-        }
+        //if (reward != 0)
+        //{
+        //    reward = reward;
+        //}
 
 		maxQ    = m_policy.getMaxQValue(newstate);
 		newQ    = thisQ + m_alpha*(reward + m_gamma*maxQ - thisQ);
@@ -116,7 +116,7 @@ void RLearner::Sarsa()
 
 int RLearner::SelectAction(vector<int>& state)
 {
-	int selectedAction = 0;
+	int selectedAction = -1;
 
 	switch (selectActionMethod)
 	{
@@ -129,7 +129,13 @@ int RLearner::SelectAction(vector<int>& state)
 	
     default:
 		break;
-	}
+    }
+
+    // TODO: Eliminate potential infinite loop
+    while (!m_learningWorld.ValidAction(selectedAction))
+    {
+        selectedAction = rand() % m_policy.getActionNum();
+    }
 
 	return selectedAction;
 }
