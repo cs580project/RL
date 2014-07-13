@@ -30,8 +30,8 @@ public:
     inline void         SetRunning(bool const& running) { m_running = running;    };
     inline void         SetPlaying(bool const& playing) { m_playing = playing;    };
     RLWorld&		    getWorld()                      { return m_learningWorld; };
-	int                 SelectAction(vector<int>& state);
 	void				reset();
+
 private:
     void                RunEpoch(LearningMethod method);
     void                QLearning();
