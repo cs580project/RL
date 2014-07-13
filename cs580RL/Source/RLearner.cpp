@@ -61,7 +61,7 @@ void RLearner::QLearning()
 
 		vector<int>     state       = m_learningWorld.GetCurrentState();
 		int             action      = SelectAction(state);
-		vector<int>&    newstate    = m_learningWorld.GetNextState(action);
+		vector<int>&    newstate    = m_learningWorld.GetNextState(action, true);
 		float           reward      = m_learningWorld.GetReward();
 
 		thisQ   = m_policy.getQValue(state, action);
@@ -103,7 +103,7 @@ void RLearner::Sarsa()
 			return;
 		}
 
-		vector<int>&    newstate = m_learningWorld.GetNextState(action);
+		vector<int>&    newstate = m_learningWorld.GetNextState(action, true);
 		float           reward = m_learningWorld.GetReward();
 
 		newAction = SelectAction(newstate);

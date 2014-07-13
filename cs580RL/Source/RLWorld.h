@@ -16,7 +16,7 @@ public:
 	~RLWorld();
 
 	float           GetReward();
-	vector<int>&    GetNextState(int action);
+	vector<int>&    GetNextState(int action, bool update);
 	vector<int>&    GetCurrentState();
 	void            ResetState();
 	void            ResetGame();
@@ -24,15 +24,15 @@ public:
     bool            EndState();
     void            DrawRLState(bool teleport);
 
-	int returnCatScore();
-	int returnMouseScore();
+    int  GetCatTrainingScore()      { return catScoresTraining;     };
+    int  GetCatPlayingScore()       { return catScoresPlaying;      };
+    int  GetMouseTrainingScore()    { return mouseScoresTraining;   };
+    int  GetMousePlayingScore()     { return mouseScoresPlaying;    };
 
 	void SetRewardVal(float reward) { currentReward = reward; }
 	void SetPunishVal(float punish) { currentPunish = punish; }
 
 private:
-	vector<int> stateArray;
-	int catScores, mouseScores;	//keep the score
     void    InitialValue();
     void    LoadMapInfo();
     float   CalcReward();	    //calculate reward(waiting reward)
@@ -43,7 +43,13 @@ private:
     void    SetRandomPos();
     void    MoveMouse();	    //no learning
     void    MoveCat();
+    void    UpdateScores(bool playing);
+    bool    CatScored();
+    bool    MouseScored();
 
+	vector<int> stateArray;
+	int     catScoresTraining, mouseScoresTraining;	//keep the score
+    int     catScoresPlaying, mouseScoresPlaying;	//keep the score
 	vector<int> currentState;	//include coords for mouse,cat,cheese
 
 	int     mx, my;	            //coordinates for mouse
