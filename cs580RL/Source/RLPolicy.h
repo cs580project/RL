@@ -20,6 +20,8 @@ public:
 	float           getMaxQValue(vector<int> state);
     void            resetToDefault();
 
+    int				getActionNum()  { return actionNum; }
+
 private:
 
 	map<vector<int>, vector<float>> qValueTable;
