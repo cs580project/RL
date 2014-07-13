@@ -301,7 +301,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
             else
             {
                 static const float cWalkSpeed       = 0.40f;
-                static const float cJogSpeed        = 0.15f;
+                static const float cJogSpeed        = 0.25f;
                 static const float cTeleportSpeed   = 0.00f;
 
                 float waitTime;
@@ -333,6 +333,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                         g_catWin = m_RLearner.getWorld().GetCatPlayingScore();
                         g_mouseWin = m_RLearner.getWorld().GetMousePlayingScore();
                         m_RLearner.getWorld().ResetState(); // Resets starting positions.
+                        startPos = true;
                         --gamesLeftToPlay;
                     }
                     else
