@@ -45,7 +45,7 @@
 World::World(void)
 : m_initialized(false)
 {
-	srand(time(NULL));
+	srand(static_cast<unsigned int>(time(NULL)));
 }
 
 World::~World(void)
