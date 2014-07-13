@@ -95,3 +95,7 @@ float RLPolicy::getMaxQValue(vector<int> state)
     return maxQ;
 }
 
+void RLPolicy::resetToDefault()
+{
+    qValueTable.clear();
+}

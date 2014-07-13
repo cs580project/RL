@@ -7,9 +7,7 @@
 
 RLWorld::RLWorld()
 {
-	InitialValue();
-	LoadMapInfo();
-	ResetState();
+    ResetAll();
 }
 
 RLWorld::~RLWorld()
@@ -88,13 +86,40 @@ void RLWorld::ResetState()
 	SetRandomPos();
 }
 
-void RLWorld::ResetGame()
+void RLWorld::ResetScores()
 {
 	catScoresTraining   = 0;
     catScoresPlaying    = 0;
 	mouseScoresTraining = 0;
     mouseScoresPlaying  = 0;
 }
+
+void RLWorld::ResetAll()
+{
+    InitialValue();
+    ResetScores();
+    LoadMapInfo();
+    ResetState();
+}
+
+void RLWorld::ResetAllButScores()
+{
+    LoadMapInfo();
+    ResetState();
+}
+
+void RLWorld::InitialValue()
+{
+    for (int i = 0; i < 6; ++i)
+    {
+        stateArray.push_back(-1);
+    }
+
+    currentReward = 0;
+    currentPunish = 0;
+}
+
+
 bool RLWorld::ValidAction(int action)
 {
     Pos nPos;
@@ -309,20 +334,6 @@ void RLWorld::SetRandomPos()
 
 	chx = nPos.x;
 	chy = nPos.y;
-}
-
-void RLWorld::InitialValue()
-{
-	//vector<int> stateArray;
-
-    for (int i = 0; i < 6; ++i)
-    {
-        stateArray.push_back(-1);
-    }
-
-	currentReward   = 50;
-	currentPunish   = 10;
-    ResetGame();
 }
 
 Pos RLWorld::GetCoords(int action)

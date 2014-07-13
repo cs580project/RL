@@ -3,6 +3,8 @@
 #include "database.h"
 #include "terrain.h"
 
+extern float	    g_reward;
+extern float        g_punish;
 extern unsigned int	g_catWin;
 extern unsigned int	g_mouseWin;
 extern unsigned int	g_trainCatWin;
@@ -35,7 +37,9 @@ enum SubstateName {		//Order doesn't matter
 RLGame::RLGame(GameObject & object) :
     StateMachine(object),
     m_learningWorld(),
-    m_RLearner(m_learningWorld)
+    m_RLearner(m_learningWorld),
+    m_punishmentValue(0.f),
+    m_rewardValue(0.f)
 {
 
 }
@@ -47,7 +51,22 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
 	//Global message response section
 	OnMsg( MSG_Reset )
 		ResetStateMachine();
+        m_RLearner.GetPolicy().resetToDefault();
         ChangeState(STATE_Initialize);
+
+    OnMsg(MSG_ResetLearner)
+        m_RLearner.GetPolicy().resetToDefault();
+        m_learningWorld.ResetAllButScores();
+        g_trainingStatus = 0;
+        ChangeState(STATE_Waiting);
+
+
+    OnMsg(MSG_ClearScores)
+        g_catWin = 0;
+        g_mouseWin = 0;
+        g_trainCatWin = 0;
+        g_trainMouseWin = 0;
+        m_learningWorld.ResetScores();
 
     OnMsg(MSG_SetRLSpeed)
         switch (static_cast<RLSpeed>(msg->GetIntData()))
@@ -78,8 +97,8 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
     DeclareState(STATE_Initialize)
 
         OnEnter
-            m_punishmentValue = 0.0f;
-            m_rewardValue = 0.0f;
+            m_punishmentValue = g_punish;
+            m_rewardValue = g_reward;
             m_trainingIterations = 1000;
             m_learningMethod = LearningMethod::Q_LEARNING;
             m_iterationsPerFrame = cSpeedMedium;
@@ -128,7 +147,6 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
             }
 
             m_RLearner.SetRunning(true);
-            m_RLearner.getWorld().ResetGame();
             iterations = 0;
             intermediateIterations = 0;
             g_trainingStatus = 1;
@@ -145,6 +163,8 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                 {
                     intermediateIterations = 0;
 
+                    m_RLearner.getWorld().SetRewardVal(m_rewardValue);
+                    m_RLearner.getWorld().SetPunishVal(m_punishmentValue);
                     m_RLearner.RunTraining(1, m_learningMethod);
                     ++iterations;
 
@@ -165,6 +185,8 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
 
                 if (potentialIterations >= m_trainingIterations)
                 {
+                    m_RLearner.getWorld().SetRewardVal(m_rewardValue);
+                    m_RLearner.getWorld().SetPunishVal(m_punishmentValue);
                     m_RLearner.RunTraining(m_trainingIterations - iterations, m_learningMethod);
 
                     // Signal "teleport"
@@ -176,6 +198,8 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                 }
                 else
                 {
+                    m_RLearner.getWorld().SetRewardVal(m_rewardValue);
+                    m_RLearner.getWorld().SetPunishVal(m_punishmentValue);
                     m_RLearner.RunTraining(m_iterationsPerFrame, m_learningMethod);
 
                     iterations += m_iterationsPerFrame;

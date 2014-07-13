@@ -151,4 +151,3 @@ void RLearner::RunTraining(int numberOfEpochs, LearningMethod method)
 		RunEpoch(method);
 	}
 }
-

@@ -18,6 +18,7 @@ public:
 	void            setQValue(vector<int> state, int action, float qvalue);
 	int             getBestAction(vector<int> state);
 	float           getMaxQValue(vector<int> state);
+    void            resetToDefault();
 
 private:
 

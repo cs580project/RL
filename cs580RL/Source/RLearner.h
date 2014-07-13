@@ -22,15 +22,16 @@ public:
 	RLearner(RLWorld& world);
 	~RLearner();
 
-	void RunTraining(int numberOfEpochs, LearningMethod method);
-
+    void    RunTraining(int numberOfEpochs, LearningMethod method);
+    int     SelectAction(vector<int>& state);
+ 
     inline RLPolicy&    GetPolicy()                     { return m_policy;        };
     inline bool&        GetRunning()                    { return m_running;       };
     inline bool&        GetPlaying()                    { return m_playing;       };
     inline void         SetRunning(bool const& running) { m_running = running;    };
     inline void         SetPlaying(bool const& playing) { m_playing = playing;    };
     RLWorld&		    getWorld()                      { return m_learningWorld; };
-	int                 SelectAction(vector<int>& state);
+
 private:
     void                RunEpoch(LearningMethod method);
     void                QLearning();

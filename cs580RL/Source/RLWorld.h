@@ -19,7 +19,10 @@ public:
 	vector<int>&    GetNextState(int action, bool update);
 	vector<int>&    GetCurrentState();
 	void            ResetState();
-	void            ResetGame();
+	void            ResetScores();
+    void            ResetAll();
+    void            ResetAllButScores();
+
 	bool            ValidAction(int action);	//check if the action is legal
     bool            EndState();
     void            DrawRLState(bool teleport);
