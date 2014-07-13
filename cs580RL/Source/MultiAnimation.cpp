@@ -69,8 +69,8 @@ bool					g_aStarUsesAnalysis = false;//Default A* uses analysis
 bool                    g_movementFlag = true;//Agent will move by default
 bool                    g_fogOfWarFlag = false;//Agent has Fog of War disabled by default
 
-float					g_punish        = 0.0f;		            // Default punishment
-float					g_reward        = 0.0f;		            // Default reward
+float					g_punish        = 10.0f;                // Default punishment
+float					g_reward        = 50.0f;                // Default reward
 int						g_trainloop     = 1000;		            // Default loop time
 bool					g_useQR         = true;			        // Default use Q-Learing
 RLSpeed					g_RLspeed       = RLSpeed::Medium;      // Default speed(single step)
@@ -1142,19 +1142,23 @@ void CALLBACK OnGUIEvent( UINT nEvent, int nControlID, CDXUTControl* pControl, v
 
 
 case IDC_PUNISH:
-	if (g_punish == 0.0f)		{ g_punish = 1.0f; }
-	else if (g_punish == 1.0f)	{ g_punish = 1.2f;}
-	else if (g_punish == 1.2f)	{ g_punish = 1.5f; }
-	else if (g_punish == 1.5f)	{ g_punish = 2.0f; }
+	if (g_punish == 0.0f)		{ g_punish = 10.f; }
+	else if (g_punish == 10.f)	{ g_punish = 12.f; }
+	else if (g_punish == 12.f)	{ g_punish = 15.f; }
+    else if (g_punish == 15.f)	{ g_punish = 20.f; }
+    else if (g_punish == 20.f)	{ g_punish = 50.f; }
+    else if (g_punish == 50.f)	{ g_punish = 100.f;}
 	else						{ g_punish = 0.0f; }
 	g_database.SendMsgFromSystem(MSG_SetPunish, MSG_Data(g_punish));
 	break;
 
 case IDC_REWARD:
-	if (g_reward == 0.0f)		{ g_reward = 1.0f; }
-	else if (g_reward == 1.0f)	{ g_reward = 1.2f; }
-	else if (g_reward == 1.2f)	{ g_reward = 1.5f; }
-	else if (g_reward == 1.5f)	{ g_reward = 2.0f; }
+	if (g_reward == 0.0f)		{ g_reward = 10.f; }
+	else if (g_reward == 10.f)	{ g_reward = 12.f; }
+	else if (g_reward == 12.f)	{ g_reward = 15.f; }
+    else if (g_reward == 15.f)	{ g_reward = 20.f; }
+    else if (g_reward == 20.f)	{ g_reward = 50.f; }
+    else if (g_reward == 50.f)	{ g_reward = 100.f;}
 	else						{ g_reward = 0.0f; }
 	g_database.SendMsgFromSystem(MSG_SetReward, MSG_Data(g_reward));
 	break;
@@ -1183,7 +1187,6 @@ case IDC_METHOD_SARSA:
 	g_database.SendMsgFromSystem(MSG_SetMethod_UseQL, MSG_Data(g_useQR));
 	break;
 case IDC_RESET_RL:
-    // TODO: Add stop/reset capability
 	g_database.SendMsgFromSystem(MSG_ResetLearner);
 	break;
 case IDC_CLEAR_SCORE:
@@ -1326,7 +1329,7 @@ void  RedrawButtons()
 	bBW = (int)(winWidth*0.18);	        // button width
 	bBH = (int)(winHeight*(-0.092));	// button height
 
-	g_SampleUI.AddButton(IDC_START_TRAINING, L"Start training", rightSide - (int)(1.02*bBW), iY += gapVer, bBW, bBH);
+	g_SampleUI.AddButton(IDC_START_TRAINING, L"Start/stop training", rightSide - (int)(1.02*bBW), iY += gapVer, bBW, bBH);
 
 	g_SampleUI.AddButton(IDC_RESET_RL, L"Reset Learner", rightSide - (int)(1.02*bBW), iY += (int)(gapVer * 1.4), bBW, bBH/2);
 	g_SampleUI.AddButton(IDC_CLEAR_SCORE, L"Clear Scores", rightSide - (int)(1.02*bBW), iY += gapVer/2, bBW, bBH/2);

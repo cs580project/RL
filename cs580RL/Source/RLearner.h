@@ -19,11 +19,12 @@ class RLearner
 {
 public:
 
-	RLearner(RLWorld& world);
+	RLearner();
 	~RLearner();
 
-	void RunTraining(int numberOfEpochs, LearningMethod method);
-
+    void    RunTraining(int numberOfEpochs, LearningMethod method);
+    int     SelectAction(vector<int>& state);
+ 
     inline RLPolicy&    GetPolicy()                     { return m_policy;        };
     inline bool&        GetRunning()                    { return m_running;       };
     inline bool&        GetPlaying()                    { return m_playing;       };
@@ -39,7 +40,7 @@ private:
     void                QLambda();
 
 	RLPolicy            m_policy;
-	RLWorld&            m_learningWorld;
+	RLWorld             m_learningWorld;
 	//vector<int>         m_currentState;
 	LearningMethod      m_learningMethod;
 	SelectActionMethod  selectActionMethod;

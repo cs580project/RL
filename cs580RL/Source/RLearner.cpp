@@ -116,6 +116,7 @@ int RLearner::SelectAction(vector<int>& state)
 	switch (selectActionMethod)
 	{
 	case E_GREEDY:
+
 		if (rand() % 1000 > 0)
 		{
 			vector<float>& qvalues = m_policy.getQValues(state);
@@ -137,11 +138,9 @@ int RLearner::SelectAction(vector<int>& state)
 			}
 		}
 		break;
-
+	
 	case SOFTMAX:
 		break;
-
-
 	}
 
 	if (selectedAction == -1)
@@ -157,7 +156,7 @@ int RLearner::SelectAction(vector<int>& state)
 
 void RLearner::RunTraining(int numberOfEpochs, LearningMethod method)
 {
-	//srand(time(NULL));
+
     if (m_playing)
     {
         return;

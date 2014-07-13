@@ -3,15 +3,19 @@
 #include "database.h"
 #include "terrain.h"
 
+extern float	    g_reward;
+extern float        g_punish;
 extern unsigned int	g_catWin;
 extern unsigned int	g_mouseWin;
+extern unsigned int	g_trainCatWin;
+extern unsigned int	g_trainMouseWin;
 extern unsigned int g_trainingStatus;
 
 static const int cSpeedSuperSlow  = -16;
 static const int cSpeedSlow       = -4;
 static const int cSpeedMedium     = -1;
-static const int cSpeedFast       = 1;
-static const int cSpeedTurbo      = 10000;
+static const int cSpeedFast       =  1;
+static const int cSpeedTurbo      =  10000;
 
 //Add new states below
 enum StateName {
@@ -32,8 +36,9 @@ enum SubstateName {		//Order doesn't matter
 
 RLGame::RLGame(GameObject & object) :
     StateMachine(object),
-    m_learningWorld(),
-    m_RLearner(m_learningWorld)
+    m_RLearner(),
+    m_punishmentValue(0.f),
+    m_rewardValue(0.f)
 {
 
 }
@@ -45,7 +50,19 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
 	//Global message response section
 	OnMsg( MSG_Reset )
 		ResetStateMachine();
+        m_RLearner.GetPolicy().resetToDefault();
         ChangeState(STATE_Initialize);
+
+    OnMsg(MSG_ResetLearner)
+        m_RLearner.GetPolicy().resetToDefault();
+        m_RLearner.getWorld().ResetAllButScores();
+
+    OnMsg(MSG_ClearScores)
+        g_catWin = 0;
+        g_mouseWin = 0;
+        g_trainCatWin = 0;
+        g_trainMouseWin = 0;
+        m_RLearner.getWorld().ResetScores();
 
     OnMsg(MSG_SetRLSpeed)
         switch (static_cast<RLSpeed>(msg->GetIntData()))
@@ -72,12 +89,24 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                 break;
         }
 
+    OnMsg(MSG_StartLearning)
+        if (m_RLearner.GetRunning())
+        {
+            m_RLearner.SetRunning(false);
+            g_trainingStatus = 0;
+            ChangeState(STATE_Waiting);
+        }
+        else
+        {
+            ChangeState(STATE_Learning);
+        }
+
 	///////////////////////////////////////////////////////////////
     DeclareState(STATE_Initialize)
 
         OnEnter
-            m_punishmentValue = 0.0f;
-            m_rewardValue = 0.0f;
+            m_punishmentValue = g_punish;
+            m_rewardValue = g_reward;
             m_trainingIterations = 1000;
             m_learningMethod = LearningMethod::Q_LEARNING;
             m_iterationsPerFrame = cSpeedMedium;
@@ -106,9 +135,6 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
             if (msg->GetBoolData()) m_learningMethod = LearningMethod::Q_LEARNING;
             else m_learningMethod = LearningMethod::SARSA;
 
-        OnMsg(MSG_StartLearning)
-            ChangeState(STATE_Learning);
-
         OnMsg(MSG_StartPlaying)
             ChangeState(STATE_Playing);
 
@@ -126,7 +152,6 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
             }
 
             m_RLearner.SetRunning(true);
-            m_RLearner.getWorld().ResetGame();
             iterations = 0;
             intermediateIterations = 0;
             g_trainingStatus = 1;
@@ -143,14 +168,16 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                 {
                     intermediateIterations = 0;
 
+                    m_RLearner.getWorld().SetRewardVal(m_rewardValue);
+                    m_RLearner.getWorld().SetPunishVal(m_punishmentValue);
                     m_RLearner.RunTraining(1, m_learningMethod);
                     ++iterations;
 
-                    g_catWin   = m_RLearner.getWorld().returnCatScore();
-                    g_mouseWin = m_RLearner.getWorld().returnMouseScore();
+                    g_trainCatWin   = m_RLearner.getWorld().GetCatTrainingScore();
+                    g_trainMouseWin = m_RLearner.getWorld().GetMouseTrainingScore();
 
                     // Signal "teleport"
-                    m_learningWorld.DrawRLState(true);
+                    m_RLearner.getWorld().DrawRLState(true);
                 }
                 else
                 {
@@ -163,14 +190,12 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
 
                 if (potentialIterations >= m_trainingIterations)
                 {
+                    m_RLearner.getWorld().SetRewardVal(m_rewardValue);
+                    m_RLearner.getWorld().SetPunishVal(m_punishmentValue);
                     m_RLearner.RunTraining(m_trainingIterations - iterations, m_learningMethod);
 
-                    // TODO: Signal completion of learning algorithm
-					g_catWin = m_RLearner.getWorld().returnCatScore();
-					g_mouseWin = m_RLearner.getWorld().returnMouseScore();
-
                     // Signal "teleport"
-                    m_learningWorld.DrawRLState(true);
+                    m_RLearner.getWorld().DrawRLState(true);
 
                     m_RLearner.SetRunning(false);
                     g_trainingStatus = 2;
@@ -178,16 +203,18 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                 }
                 else
                 {
+                    m_RLearner.getWorld().SetRewardVal(m_rewardValue);
+                    m_RLearner.getWorld().SetPunishVal(m_punishmentValue);
                     m_RLearner.RunTraining(m_iterationsPerFrame, m_learningMethod);
 
                     iterations += m_iterationsPerFrame;
 
-					g_catWin = m_RLearner.getWorld().returnCatScore();
-					g_mouseWin = m_RLearner.getWorld().returnMouseScore();
-
                     // Signal "teleport"
-                    m_learningWorld.DrawRLState(true);
+                    m_RLearner.getWorld().DrawRLState(true);
                 }
+
+                g_trainCatWin = m_RLearner.getWorld().GetCatTrainingScore();
+                g_trainMouseWin = m_RLearner.getWorld().GetMouseTrainingScore();
             }
 
 
@@ -210,7 +237,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
             startPos = true;
             elapsedTime = 0.f;
 			m_RLearner.SetPlaying(true);
-			m_learningWorld.ResetState(); // Resets starting positions.
+            m_RLearner.getWorld().ResetState(); // Resets starting positions.
 
             // TODO: determine whether to apply this to all speeds
             if (m_iterationsPerFrame >= cSpeedFast)
@@ -240,11 +267,8 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                 }
                 else if (m_iterationsPerFrame < cSpeedTurbo)
                 {
-                    // teleport speed
-                }
-                else
-                {
-                    loop = true;
+                    g_database.SendMsgFromSystem(10, MSG_Reset, MSG_Data(true));
+                    g_database.SendMsgFromSystem(11, MSG_Reset, MSG_Data(true));
                 }
             }
 
@@ -255,29 +279,30 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                     static const int maxRoundsBeforeTie = 1000;
                     for (int j = 0; j < maxRoundsBeforeTie; ++j)
                     {
-                        int action = m_RLearner.SelectAction(m_learningWorld.GetCurrentState());
-                        m_learningWorld.GetNextState(action);
+                        int action = m_RLearner.SelectAction(m_RLearner.getWorld().GetCurrentState());
+                        m_RLearner.getWorld().GetNextState(action, false);
 
-                        if (m_learningWorld.EndState())
+                        if (m_RLearner.getWorld().EndState())
                         {
                             break;
                         }
                     }
 
                     // TODO: update score separately from training
-                    g_catWin = m_RLearner.getWorld().returnCatScore();
-                    g_mouseWin = m_RLearner.getWorld().returnMouseScore();
-                    m_learningWorld.ResetState(); // Resets starting positions.
+                    g_catWin = m_RLearner.getWorld().GetCatPlayingScore();
+                    g_mouseWin = m_RLearner.getWorld().GetMousePlayingScore();
+                    m_RLearner.getWorld().ResetState(); // Resets starting positions.
                     --gamesLeftToPlay;
                 }
 
+                g_trainingStatus = 0;
                 ChangeState(STATE_Waiting);
             }
             else
             {
-                static const float cWalkSpeed = 0.4f;
-                static const float cJogSpeed = 0.15f;
-                static const float cTeleportSpeed = 0.0f;
+                static const float cWalkSpeed       = 0.40f;
+                static const float cJogSpeed        = 0.25f;
+                static const float cTeleportSpeed   = 0.00f;
 
                 float waitTime;
                 if (m_iterationsPerFrame < cSpeedMedium)
@@ -303,33 +328,29 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                 {
                     elapsedTime -= waitTime;
 
-                    if (m_learningWorld.EndState())
+                    if (m_RLearner.getWorld().EndState())
                     {
-                        // TODO: update score separately from training
-                        g_catWin = m_RLearner.getWorld().returnCatScore();
-                        g_mouseWin = m_RLearner.getWorld().returnMouseScore();
-                        m_learningWorld.ResetState(); // Resets starting positions.
+                        g_catWin = m_RLearner.getWorld().GetCatPlayingScore();
+                        g_mouseWin = m_RLearner.getWorld().GetMousePlayingScore();
+                        m_RLearner.getWorld().ResetState(); // Resets starting positions.
+                        startPos = true;
                         --gamesLeftToPlay;
                     }
                     else
                     {
-                        int action = m_RLearner.SelectAction(m_learningWorld.GetCurrentState());
+                        int action = m_RLearner.SelectAction(m_RLearner.getWorld().GetCurrentState());
 
-                        m_learningWorld.GetNextState(action);
+                        m_RLearner.getWorld().GetNextState(action, false);
 
                         if (m_iterationsPerFrame < cSpeedFast)
                         {
                             // Add waypoints
-                            m_learningWorld.DrawRLState(startPos);
+                            m_RLearner.getWorld().DrawRLState(startPos);
                         }
                         else if (m_iterationsPerFrame < cSpeedTurbo)
                         {
                             // Teleport instantly
-                            m_learningWorld.DrawRLState(true);
-                        }
-                        else
-                        {
-                            // TODO: iterations per frame
+                            m_RLearner.getWorld().DrawRLState(true);
                         }
 
                         if (startPos)
@@ -344,6 +365,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                     ChangeState(STATE_Waiting);
                 }
             }
+
     EndStateMachine
 }
 
