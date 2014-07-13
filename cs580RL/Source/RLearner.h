@@ -46,7 +46,9 @@ private:
 
 	float   m_alpha;
     float   m_gamma;
+	float   m_epsilon;
     bool    m_running;
     bool    m_playing;
+
 };
 

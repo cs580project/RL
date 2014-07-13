@@ -1,6 +1,6 @@
 #include "DXUT.h"
 #include "RLearner.h"
-
+#include <time.h> 
 
 RLearner::RLearner(RLWorld& world) :
     m_learningWorld(world),
@@ -9,6 +9,7 @@ RLearner::RLearner(RLWorld& world) :
     m_playing(false),
     m_alpha(1.0f), // TODO: Make these adjustable, add Epsilon, Lambda.
     m_gamma(0.1f),
+	m_epsilon(0.1f),
 	m_learningMethod(Q_LEARNING),
 	selectActionMethod(E_GREEDY)
 {
@@ -48,9 +49,9 @@ void RLearner::QLearning()
         return;
     }
     
-	float thisQ = 0.f;
-	float maxQ  = 0.f;
-	float newQ  = 0.f;
+	float thisQ = 0.0f;
+	float maxQ  = 0.0f;
+	float newQ  = 0.0f;
 
 	while (!m_learningWorld.EndState())
 	{
@@ -115,18 +116,40 @@ int RLearner::SelectAction(vector<int>& state)
 	switch (selectActionMethod)
 	{
 	case E_GREEDY:
-		selectedAction = m_policy.getBestAction(state);
+		if (rand() % 1000 > 0)
+		{
+			vector<float>& qvalues = m_policy.getQValues(state);
+
+			float   maxQ = -100000;
+
+			for (int i = 0; i < qvalues.size(); ++i)
+			{
+				if (qvalues[i]>maxQ&&m_learningWorld.ValidAction(i))
+				{
+					maxQ = qvalues[i];
+					selectedAction = i;
+				}
+				else if (qvalues[i] == maxQ&&m_learningWorld.ValidAction(i))
+				{
+					if (rand() % 2 == 0)
+						selectedAction = i;
+				}
+			}
+		}
 		break;
-	
-    case SOFTMAX:
+
+	case SOFTMAX:
 		break;
-	
-    default:
-		break;
+
+
 	}
-	while (!m_learningWorld.ValidAction(selectedAction))
+
+	if (selectedAction == -1)
 	{
-		selectedAction = rand() % m_policy.getActionNum();
+		do
+		{
+			selectedAction = rand() % m_policy.getActionNum();
+		} while (!m_learningWorld.ValidAction(selectedAction));
 	}
 
 	return selectedAction;
@@ -134,6 +157,7 @@ int RLearner::SelectAction(vector<int>& state)
 
 void RLearner::RunTraining(int numberOfEpochs, LearningMethod method)
 {
+	//srand(time(NULL));
     if (m_playing)
     {
         return;
