@@ -7,6 +7,7 @@
 
 RLWorld::RLWorld()
 {
+    InitialValue();
     ResetAll();
 }
 
@@ -96,7 +97,6 @@ void RLWorld::ResetScores()
 
 void RLWorld::ResetAll()
 {
-    InitialValue();
     ResetScores();
     LoadMapInfo();
     ResetState();

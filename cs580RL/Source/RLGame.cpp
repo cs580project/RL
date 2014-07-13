@@ -56,9 +56,6 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
     OnMsg(MSG_ResetLearner)
         m_RLearner.GetPolicy().resetToDefault();
         m_RLearner.getWorld().ResetAllButScores();
-        g_trainingStatus = 0;
-        //ChangeState(STATE_Waiting);
-
 
     OnMsg(MSG_ClearScores)
         g_catWin = 0;
@@ -90,6 +87,18 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
             default:
                 m_iterationsPerFrame = cSpeedSuperSlow;
                 break;
+        }
+
+    OnMsg(MSG_StartLearning)
+        if (m_RLearner.GetRunning())
+        {
+            m_RLearner.SetRunning(false);
+            g_trainingStatus = 0;
+            ChangeState(STATE_Waiting);
+        }
+        else
+        {
+            ChangeState(STATE_Learning);
         }
 
 	///////////////////////////////////////////////////////////////
@@ -125,9 +134,6 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
         OnMsg(MSG_SetMethod_UseQL)
             if (msg->GetBoolData()) m_learningMethod = LearningMethod::Q_LEARNING;
             else m_learningMethod = LearningMethod::SARSA;
-
-        OnMsg(MSG_StartLearning)
-            ChangeState(STATE_Learning);
 
         OnMsg(MSG_StartPlaying)
             ChangeState(STATE_Playing);
@@ -292,6 +298,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                     --gamesLeftToPlay;
                 }
 
+                g_trainingStatus = 0;
                 ChangeState(STATE_Waiting);
             }
             else

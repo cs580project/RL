@@ -1329,7 +1329,7 @@ void  RedrawButtons()
 	bBW = (int)(winWidth*0.18);	        // button width
 	bBH = (int)(winHeight*(-0.092));	// button height
 
-	g_SampleUI.AddButton(IDC_START_TRAINING, L"Start training", rightSide - (int)(1.02*bBW), iY += gapVer, bBW, bBH);
+	g_SampleUI.AddButton(IDC_START_TRAINING, L"Start/stop training", rightSide - (int)(1.02*bBW), iY += gapVer, bBW, bBH);
 
 	g_SampleUI.AddButton(IDC_RESET_RL, L"Reset Learner", rightSide - (int)(1.02*bBW), iY += (int)(gapVer * 1.4), bBW, bBH/2);
 	g_SampleUI.AddButton(IDC_CLEAR_SCORE, L"Clear Scores", rightSide - (int)(1.02*bBW), iY += gapVer/2, bBW, bBH/2);
