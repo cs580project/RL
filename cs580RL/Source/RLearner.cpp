@@ -2,8 +2,8 @@
 #include "RLearner.h"
 #include <time.h> 
 
-RLearner::RLearner(RLWorld& world) :
-    m_learningWorld(world),
+RLearner::RLearner() :
+    m_learningWorld(),
     m_policy(8),
     m_running(false),
     m_playing(false),
@@ -62,7 +62,7 @@ void RLearner::QLearning()
 
 		vector<int>     state       = m_learningWorld.GetCurrentState();
 		int             action      = SelectAction(state);
-		vector<int>&    newstate    = m_learningWorld.GetNextState(action);
+		vector<int>&    newstate = m_learningWorld.GetNextState(action, true);
 		float           reward      = m_learningWorld.GetReward();
 
 		thisQ   = m_policy.getQValue(state, action);
@@ -98,7 +98,7 @@ void RLearner::Sarsa()
 			return;
 		}
 
-		vector<int>&    newstate = m_learningWorld.GetNextState(action);
+		vector<int>&    newstate = m_learningWorld.GetNextState(action, true);
 		float           reward = m_learningWorld.GetReward();
 
 		newAction = SelectAction(newstate);
@@ -176,7 +176,7 @@ void RLearner::RunTraining(int numberOfEpochs, LearningMethod method)
 void RLearner::reset()
 {
 	m_running = false;
-	m_policy.clear();
-	m_learningWorld.ResetGame();
+	m_policy.resetToDefault();
+	m_learningWorld.ResetAll();
 }
 
