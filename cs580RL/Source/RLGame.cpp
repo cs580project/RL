@@ -53,9 +53,12 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
         m_RLearner.GetPolicy().resetToDefault();
         ChangeState(STATE_Initialize);
 
-    OnMsg(MSG_ResetLearner)
-        m_RLearner.GetPolicy().resetToDefault();
-        m_RLearner.getWorld().ResetAllButScores();
+	OnMsg(MSG_ResetLearner)
+		m_RLearner.reset();
+		g_catWin = 0;
+		g_mouseWin = 0;
+		g_trainCatWin = 0;
+		g_trainMouseWin = 0;
 
     OnMsg(MSG_ClearScores)
         g_catWin = 0;
