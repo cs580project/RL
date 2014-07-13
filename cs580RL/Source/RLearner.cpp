@@ -65,12 +65,6 @@ void RLearner::QLearning()
 		float           reward      = m_learningWorld.GetReward();
 
 		thisQ   = m_policy.getQValue(state, action);
-        
-        if (reward != 0)
-        {
-            reward = reward;
-        }
-
 		maxQ    = m_policy.getMaxQValue(newstate);
 		newQ    = thisQ + m_alpha*(reward + m_gamma*maxQ - thisQ);
 		m_policy.setQValue(state, action, newQ);
@@ -116,7 +110,7 @@ void RLearner::Sarsa()
 
 int RLearner::SelectAction(vector<int>& state)
 {
-	int selectedAction = 0;
+	int selectedAction = -1;
 
 	switch (selectActionMethod)
 	{
@@ -129,6 +123,10 @@ int RLearner::SelectAction(vector<int>& state)
 	
     default:
 		break;
+	}
+	while (!m_learningWorld.ValidAction(selectedAction))
+	{
+		selectedAction = rand() % m_policy.getActionNum();
 	}
 
 	return selectedAction;
@@ -150,5 +148,12 @@ void RLearner::RunTraining(int numberOfEpochs, LearningMethod method)
 
 		RunEpoch(method);
 	}
+}
+
+void RLearner::reset()
+{
+	m_running = false;
+	m_policy.clear();
+	m_learningWorld.ResetGame();
 }
 

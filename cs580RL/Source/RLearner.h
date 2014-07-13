@@ -31,6 +31,7 @@ public:
     inline void         SetPlaying(bool const& playing) { m_playing = playing;    };
     RLWorld&		    getWorld()                      { return m_learningWorld; };
 	int                 SelectAction(vector<int>& state);
+	void				reset();
 private:
     void                RunEpoch(LearningMethod method);
     void                QLearning();
@@ -39,7 +40,7 @@ private:
 
 	RLPolicy            m_policy;
 	RLWorld&            m_learningWorld;
-	vector<int>         m_currentState;
+	//vector<int>         m_currentState;
 	LearningMethod      m_learningMethod;
 	SelectActionMethod  selectActionMethod;
 

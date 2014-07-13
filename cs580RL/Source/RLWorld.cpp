@@ -82,6 +82,7 @@ void RLWorld::ResetState()
 
 void RLWorld::ResetGame()
 {
+	ResetState();
 	catScores   = 0;
 	mouseScores = 0;
 }
