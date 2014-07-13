@@ -2,8 +2,8 @@
 #include "RLearner.h"
 
 
-RLearner::RLearner(RLWorld& world) :
-    m_learningWorld(world),
+RLearner::RLearner() :
+    m_learningWorld(),
     m_policy(8),
     m_running(false),
     m_playing(false),
@@ -61,10 +61,11 @@ void RLearner::QLearning()
 
 		vector<int>     state       = m_learningWorld.GetCurrentState();
 		int             action      = SelectAction(state);
-		vector<int>&    newstate    = m_learningWorld.GetNextState(action);
+		vector<int>&    newstate    = m_learningWorld.GetNextState(action, true);
 		float           reward      = m_learningWorld.GetReward();
 
 		thisQ   = m_policy.getQValue(state, action);
+
 		maxQ    = m_policy.getMaxQValue(newstate);
 		newQ    = thisQ + m_alpha*(reward + m_gamma*maxQ - thisQ);
 		m_policy.setQValue(state, action, newQ);
@@ -97,7 +98,7 @@ void RLearner::Sarsa()
 			return;
 		}
 
-		vector<int>&    newstate = m_learningWorld.GetNextState(action);
+		vector<int>&    newstate = m_learningWorld.GetNextState(action, true);
 		float           reward = m_learningWorld.GetReward();
 
 		newAction = SelectAction(newstate);
@@ -123,11 +124,13 @@ int RLearner::SelectAction(vector<int>& state)
 	
     default:
 		break;
-	}
-	while (!m_learningWorld.ValidAction(selectedAction))
-	{
-		selectedAction = rand() % m_policy.getActionNum();
-	}
+    }
+
+    // TODO: Eliminate potential infinite loop
+    while (!m_learningWorld.ValidAction(selectedAction))
+    {
+        selectedAction = rand() % m_policy.getActionNum();
+    }
 
 	return selectedAction;
 }
@@ -139,21 +142,15 @@ void RLearner::RunTraining(int numberOfEpochs, LearningMethod method)
         return;
     }
 
-	for (int i = 0; i < numberOfEpochs; ++i)
+    for (int i = 0; i < numberOfEpochs; ++i)
     {
         if (!m_running)
         {
             return;
         }
 
-		RunEpoch(method);
-	}
-}
 
-void RLearner::reset()
-{
-	m_running = false;
-	m_policy.clear();
-	m_learningWorld.ResetGame();
+        RunEpoch(method);
+    }
 }
 

@@ -27,7 +27,6 @@ private:
     void ChangeAgentSpeeds();
 
 	RLearner        m_RLearner;
-	RLWorld         m_learningWorld;
 
     float           m_punishmentValue;
     float           m_rewardValue;

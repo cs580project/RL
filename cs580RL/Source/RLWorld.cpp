@@ -7,9 +7,8 @@
 
 RLWorld::RLWorld()
 {
-	InitialValue();
-	LoadMapInfo();
-	ResetState();
+    InitialValue();
+    ResetAll();
 }
 
 RLWorld::~RLWorld()
@@ -34,7 +33,7 @@ vector<int>& RLWorld::GetCurrentState()
 	return stateArray;
 }
 
-vector<int>& RLWorld::GetNextState(int action)
+vector<int>& RLWorld::GetNextState(int action, bool update)
 {
 	// action is mouse action:  0=u 1=ur 2=r 3=dr ... 7=ul
 	Pos nPos = GetCoords(action);
@@ -54,7 +53,15 @@ vector<int>& RLWorld::GetNextState(int action)
 	MoveCat();
 	
     // calculate reward
-    waitingReward = CalcReward();
+    if (update)
+    {
+        waitingReward = CalcReward();
+        UpdateScores(false);
+    }
+    else
+    {
+        UpdateScores(true);
+    }
 
 	// if mouse has cheese, relocate cheese
 	if ((mx == chx) && (my == chy))
@@ -80,12 +87,39 @@ void RLWorld::ResetState()
 	SetRandomPos();
 }
 
-void RLWorld::ResetGame()
+void RLWorld::ResetScores()
 {
-	ResetState();
-	catScores   = 0;
-	mouseScores = 0;
+	catScoresTraining   = 0;
+    catScoresPlaying    = 0;
+	mouseScoresTraining = 0;
+    mouseScoresPlaying  = 0;
 }
+
+void RLWorld::ResetAll()
+{
+    ResetScores();
+    LoadMapInfo();
+    ResetState();
+}
+
+void RLWorld::ResetAllButScores()
+{
+    LoadMapInfo();
+    ResetState();
+}
+
+void RLWorld::InitialValue()
+{
+    for (int i = 0; i < 6; ++i)
+    {
+        stateArray.push_back(-1);
+    }
+
+    currentReward = 0;
+    currentPunish = 0;
+}
+
+
 bool RLWorld::ValidAction(int action)
 {
     Pos nPos;
@@ -104,19 +138,54 @@ float RLWorld::CalcReward()
 {
 	float newReward = 0;
 
-	if ((mx == chx) && (my == chy))
+    if (MouseScored())
 	{
-		mouseScores++;
 		newReward += currentReward;
 	}
 
-	if ((cx == mx) && (cy == my))
+	if (CatScored())
 	{
-		catScores++;
 		newReward -= currentPunish;
 	}
 
 	return newReward;
+}
+
+void RLWorld::UpdateScores(bool playing)
+{
+    if (MouseScored())
+    {
+        if (playing)
+        {
+            mouseScoresPlaying++;
+        }
+        else
+        {
+            mouseScoresTraining++;
+        }
+    }
+
+    if (CatScored())
+    {
+        if (playing)
+        {
+            catScoresPlaying++;
+        }
+        else
+        {
+            catScoresTraining++;
+        }
+    }
+}
+
+bool RLWorld::CatScored()
+{
+    return ((cx == mx) && (cy == my));
+}
+
+bool RLWorld::MouseScored()
+{
+    return ((mx == chx) && (my == chy));
 }
 
 bool RLWorld::IsWall(int a, int b)
@@ -267,21 +336,6 @@ void RLWorld::SetRandomPos()
 	chy = nPos.y;
 }
 
-void RLWorld::InitialValue()
-{
-	//vector<int> stateArray;
-
-    for (int i = 0; i < 6; ++i)
-    {
-        stateArray.push_back(-1);
-    }
-
-	currentReward   = 50;
-	currentPunish   = 10;
-	catScores       = 0;
-	mouseScores     = 0;
-}
-
 Pos RLWorld::GetCoords(int action)
 {
 	Pos nPos;
@@ -321,14 +375,4 @@ void RLWorld::DrawRLState(bool teleport)
 
     g_terrain.ResetColors();
 	g_terrain.SetColor(chx,chy, DEBUG_COLOR_BLUE);
-}
-
-int RLWorld::returnCatScore()
-{
-	return catScores;
-}
-
-int RLWorld::returnMouseScore()
-{
-	return mouseScores;
 }

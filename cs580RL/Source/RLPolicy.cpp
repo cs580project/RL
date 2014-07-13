@@ -51,8 +51,8 @@ int RLPolicy::getBestAction(vector<int> state)
 	
     for (int i = 0; i < actionNum; ++i)
 	{
-		if (qvalues[i]>maxQ
-			|| (qvalues[i] == maxQ&&rand() % 2 == 0))
+        if (qvalues[i]>maxQ
+            || (qvalues[i] == maxQ&&rand() % 2 == 0))
 		{
 			maxQ = qvalues[i];
 			bestAction = i;
@@ -96,8 +96,8 @@ float RLPolicy::getMaxQValue(vector<int> state)
     return maxQ;
 }
 
-void RLPolicy::clear()
+void RLPolicy::resetToDefault()
 {
-	qValueTable.clear();
+    qValueTable.clear();
+    actionNum = 8;
 }
-
