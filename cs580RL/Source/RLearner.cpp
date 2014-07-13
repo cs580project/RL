@@ -2,8 +2,8 @@
 #include "RLearner.h"
 
 
-RLearner::RLearner(RLWorld& world) :
-    m_learningWorld(world),
+RLearner::RLearner() :
+    m_learningWorld(),
     m_policy(8),
     m_running(false),
     m_playing(false),
