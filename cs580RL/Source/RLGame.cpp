@@ -267,11 +267,8 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                 }
                 else if (m_iterationsPerFrame < cSpeedTurbo)
                 {
-                    // teleport speed
-                }
-                else
-                {
-                    loop = true;
+                    g_database.SendMsgFromSystem(10, MSG_Reset, MSG_Data(true));
+                    g_database.SendMsgFromSystem(11, MSG_Reset, MSG_Data(true));
                 }
             }
 
@@ -333,7 +330,6 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
 
                     if (m_RLearner.getWorld().EndState())
                     {
-                        // TODO: update score separately from training
                         g_catWin = m_RLearner.getWorld().GetCatPlayingScore();
                         g_mouseWin = m_RLearner.getWorld().GetMousePlayingScore();
                         m_RLearner.getWorld().ResetState(); // Resets starting positions.
@@ -355,10 +351,6 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                             // Teleport instantly
                             m_RLearner.getWorld().DrawRLState(true);
                         }
-                        else
-                        {
-                            // TODO: iterations per frame
-                        }
 
                         if (startPos)
                         {
@@ -372,6 +364,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                     ChangeState(STATE_Waiting);
                 }
             }
+
     EndStateMachine
 }
 
