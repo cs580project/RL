@@ -23,7 +23,7 @@ public:
 	~RLearner();
 
     void    RunTraining(int numberOfEpochs, LearningMethod method);
- 
+	int RLearner::SelectAction(vector<int>& state);
     inline RLPolicy&    GetPolicy()                     { return m_policy;        };
     inline bool&        GetRunning()                    { return m_running;       };
     inline bool&        GetPlaying()                    { return m_playing;       };
