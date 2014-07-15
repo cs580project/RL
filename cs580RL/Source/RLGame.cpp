@@ -38,7 +38,8 @@ RLGame::RLGame(GameObject & object) :
     StateMachine(object),
     m_RLearner(),
     m_punishmentValue(0.f),
-    m_rewardValue(0.f)
+    m_rewardValue(0.f),
+    m_playIsContinuous(true)
 {
 
 }
@@ -53,9 +54,12 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
         m_RLearner.GetPolicy().resetToDefault();
         ChangeState(STATE_Initialize);
 
-    OnMsg(MSG_ResetLearner)
-        m_RLearner.GetPolicy().resetToDefault();
-        m_RLearner.getWorld().ResetAllButScores();
+	OnMsg(MSG_ResetLearner)
+		m_RLearner.reset();
+		g_catWin = 0;
+		g_mouseWin = 0;
+		g_trainCatWin = 0;
+		g_trainMouseWin = 0;
 
     OnMsg(MSG_ClearScores)
         g_catWin = 0;
@@ -89,6 +93,10 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                 break;
         }
 
+    OnMsg(MSG_SetPlayContinuous)
+        m_playIsContinuous = msg->GetBoolData();
+        break;
+
     OnMsg(MSG_StartLearning)
         if (m_RLearner.GetRunning())
         {
@@ -99,6 +107,18 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
         else
         {
             ChangeState(STATE_Learning);
+        }
+
+    OnMsg(MSG_StartPlaying)
+        if (m_RLearner.GetPlaying())
+        {
+            m_RLearner.SetPlaying(false);
+            g_trainingStatus = 0;
+            ChangeState(STATE_Waiting);
+        }
+        else
+        {
+            ChangeState(STATE_Playing);
         }
 
 	///////////////////////////////////////////////////////////////
@@ -134,9 +154,6 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
         OnMsg(MSG_SetMethod_UseQL)
             if (msg->GetBoolData()) m_learningMethod = LearningMethod::Q_LEARNING;
             else m_learningMethod = LearningMethod::SARSA;
-
-        OnMsg(MSG_StartPlaying)
-            ChangeState(STATE_Playing);
 
 
 	///////////////////////////////////////////////////////////////
@@ -226,6 +243,8 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
         DeclareStateInt(lastIterationsPerFrame)
         DeclareStateBool(loop)
         DeclareStateInt(gamesLeftToPlay)
+        DeclareStateInt(gamesLeftToPlayPrev)
+        DeclareStateBool(wasPlayingContinuouslyLastFrame)
 
 		OnEnter
             if (m_RLearner.GetRunning())
@@ -239,15 +258,11 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
 			m_RLearner.SetPlaying(true);
             m_RLearner.getWorld().ResetState(); // Resets starting positions.
 
-            // TODO: determine whether to apply this to all speeds
-            if (m_iterationsPerFrame >= cSpeedFast)
-            {
-                gamesLeftToPlay = m_trainingIterations;
-            }
-            else
-            {
-                gamesLeftToPlay = 1;
-            }
+            g_trainingStatus = 3;
+
+            // force it to update this state on the first frame
+            wasPlayingContinuouslyLastFrame = !m_playIsContinuous;
+            gamesLeftToPlayPrev = m_trainingIterations;
 
 		OnUpdate
 
@@ -270,6 +285,25 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                     g_database.SendMsgFromSystem(10, MSG_Reset, MSG_Data(true));
                     g_database.SendMsgFromSystem(11, MSG_Reset, MSG_Data(true));
                 }
+                else
+                {
+                    loop = true;
+                }
+            }
+
+            if (wasPlayingContinuouslyLastFrame != m_playIsContinuous)
+            {
+                if (m_playIsContinuous)
+                {
+                    // pick up where it left off for iterations left
+                    gamesLeftToPlay = gamesLeftToPlayPrev;
+                }
+                else
+                {
+                    // just finish the current game
+                    gamesLeftToPlayPrev = gamesLeftToPlay;
+                    gamesLeftToPlay = 1;
+                }
             }
 
             if (loop)
@@ -288,7 +322,6 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                         }
                     }
 
-                    // TODO: update score separately from training
                     g_catWin = m_RLearner.getWorld().GetCatPlayingScore();
                     g_mouseWin = m_RLearner.getWorld().GetMousePlayingScore();
                     m_RLearner.getWorld().ResetState(); // Resets starting positions.
@@ -357,11 +390,15 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                         {
                             startPos = false;
                         }
+
+                        // Always update the mouse's score, since it can change before game ends.
+                        g_mouseWin = m_RLearner.getWorld().GetMousePlayingScore();
                     }
                 }
 
                 if (gamesLeftToPlay <= 0)
                 {
+                    g_trainingStatus = 0;
                     ChangeState(STATE_Waiting);
                 }
             }
@@ -384,6 +421,6 @@ void RLGame::ChangeAgentSpeeds()
     }
     else
     {
-        // TODO: Iterations per frame
+        // doesn't matter, will run all iterations before allowing a frame update.
     }
 }

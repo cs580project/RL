@@ -16,7 +16,7 @@ public:
 	vector<float>&  getQValues(vector<int> state);
 	float           getQValue(vector<int> state, int action);
 	void            setQValue(vector<int> state, int action, float qvalue);
-	int             getBestAction(vector<int> state);
+	int				getBestAction(vector<int> state);
 	float           getMaxQValue(vector<int> state);
     void            resetToDefault();
 
@@ -26,6 +26,7 @@ private:
 
 	map<vector<int>, vector<float>> qValueTable;
 
+	vector<float> emptyState;
 	int actionNum;
 };
 

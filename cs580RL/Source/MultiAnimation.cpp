@@ -276,10 +276,10 @@ void InitApp()
 	g_SampleUI.AddButton(IDC_METHOD_QL, L"Q-Learning", 40, iY += 52, 60, 24);
 	g_SampleUI.AddButton(IDC_METHOD_SARSA, L"SARSA", 100, iY, 60, 24);
 
-	g_SampleUI.AddButton(IDC_START_TRAINING, L"Start training", 40, iY += 52, 120, 48);
+	g_SampleUI.AddButton(IDC_START_TRAINING, L"Start/stop training", 40, iY += 52, 120, 48);
 
 	g_SampleUI.AddButton(IDC_RESET_RL, L"Reset", 40, iY += 100, 120, 48);
-	g_SampleUI.AddButton(IDC_START_PLAYING, L"Start playing", 40, iY += 52, 120, 48);
+	g_SampleUI.AddButton(IDC_START_PLAYING, L"Start/stop playing", 40, iY += 52, 120, 48);
 
 	g_SampleUI.AddButton(IDC_SPEED_SUPERSLOW, L"Super slow", -(winMidVer + 30), iY += 140, 70, 16);
 	g_SampleUI.AddButton(IDC_SPEED_SLOW, L"Slow", -(winMidVer -60), iY, 70, 16);
@@ -885,6 +885,12 @@ void RenderText()
         txtHelper.SetInsertionPos(105, 60);
         txtHelper.DrawFormattedTextLine(L"Training complete!");
 		break;	
+    case 3:
+        txtHelper.DrawFormattedTextLine(L"Training Status:	");
+        txtHelper.SetForegroundColor(D3DXCOLOR(1.0f, 1.0f, 0.6f, 1.0f));
+        txtHelper.SetInsertionPos(105, 60);
+        txtHelper.DrawFormattedTextLine(L"Playing game...");
+        break;
     default:
         txtHelper.SetForegroundColor(D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
         txtHelper.DrawFormattedTextLine(L"Training Status:	");
@@ -1333,7 +1339,7 @@ void  RedrawButtons()
 
 	g_SampleUI.AddButton(IDC_RESET_RL, L"Reset Learner", rightSide - (int)(1.02*bBW), iY += (int)(gapVer * 1.4), bBW, bBH/2);
 	g_SampleUI.AddButton(IDC_CLEAR_SCORE, L"Clear Scores", rightSide - (int)(1.02*bBW), iY += gapVer/2, bBW, bBH/2);
-	g_SampleUI.AddButton(IDC_START_PLAYING, L"Start playing", rightSide - (int)(1.02*bBW), iY += gapVer/2, bBW, bBH);
+	g_SampleUI.AddButton(IDC_START_PLAYING, L"Start/stop playing", rightSide - (int)(1.02*bBW), iY += gapVer/2, bBW, bBH);
 
 
 	int sBVerOffset = (int)(winHeight / 2 * 0.78);

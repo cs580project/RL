@@ -28,6 +28,7 @@ private:
 
 	RLearner        m_RLearner;
 
+    bool            m_playIsContinuous;
     float           m_punishmentValue;
     float           m_rewardValue;
     LearningMethod  m_learningMethod;

@@ -14,7 +14,9 @@ RLPolicy::~RLPolicy()
 
 vector<float>& RLPolicy::getQValues(vector<int> state)
 {
-	return qValueTable[state];
+	if (qValueTable.count(state) > 0)
+		return qValueTable[state];
+	else return emptyState;
 }
 
 void RLPolicy::setQValue(vector<int> state, int action, float qvalue)
@@ -37,19 +39,19 @@ void RLPolicy::setQValue(vector<int> state, int action, float qvalue)
 	qvalues[action] = qvalue;
 }
 
-int RLPolicy::getBestAction(vector<int> state)
+int  RLPolicy::getBestAction(vector<int> state)
 {
-    if (qValueTable.count(state) == 0)
-    {
-        return rand() % actionNum;
-    }
-    
-    vector<float>& qvalues = qValueTable[state];
+	if (qValueTable.count(state) == 0)
+	{
+		return rand() % actionNum;
+	}
 
-	float   maxQ        = -100000;
-	int     bestAction  =  0;
-	
-    for (int i = 0; i < actionNum; ++i)
+	vector<float>& qvalues = qValueTable[state];
+
+	float   maxQ = -100000;
+	int     bestAction = 0;
+
+	for (int i = 0; i < actionNum; ++i)
 	{
         if (qvalues[i]>maxQ
             || (qvalues[i] == maxQ&&rand() % 2 == 0))
@@ -82,7 +84,7 @@ float RLPolicy::getMaxQValue(vector<int> state)
     }
 
 	vector<float>&  qvalues     = qValueTable[state];
-	float           maxQ        = -1;
+	float           maxQ        = -100000;
 	int             bestAction  =  0;
 	
     for (int i = 0; i < actionNum; ++i)

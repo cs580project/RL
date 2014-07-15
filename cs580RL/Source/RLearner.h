@@ -23,8 +23,7 @@ public:
 	~RLearner();
 
     void    RunTraining(int numberOfEpochs, LearningMethod method);
-    int     SelectAction(vector<int>& state);
- 
+	int RLearner::SelectAction(vector<int>& state);
     inline RLPolicy&    GetPolicy()                     { return m_policy;        };
     inline bool&        GetRunning()                    { return m_running;       };
     inline bool&        GetPlaying()                    { return m_playing;       };
@@ -47,7 +46,9 @@ private:
 
 	float   m_alpha;
     float   m_gamma;
+	float   m_epsilon;
     bool    m_running;
     bool    m_playing;
+
 };
 
