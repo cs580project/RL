@@ -234,6 +234,8 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
         DeclareStateInt(lastIterationsPerFrame)
         DeclareStateBool(loop)
         DeclareStateInt(gamesLeftToPlay)
+        DeclareStateInt(gamesLeftToPlayPrev)
+        DeclareStateBool(wasPlayingContinuouslyLastFrame)
 
 		OnEnter
             if (m_RLearner.GetRunning())
@@ -247,14 +249,9 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
 			m_RLearner.SetPlaying(true);
             m_RLearner.getWorld().ResetState(); // Resets starting positions.
 
-            if (m_playIsContinuous)
-            {
-                gamesLeftToPlay = m_trainingIterations;
-            }
-            else
-            {
-                gamesLeftToPlay = 1;
-            }
+            // force it to update this state on the first frame
+            wasPlayingContinuouslyLastFrame = !m_playIsContinuous;
+            gamesLeftToPlayPrev = m_trainingIterations;
 
 		OnUpdate
 
@@ -280,6 +277,21 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                 else
                 {
                     loop = true;
+                }
+            }
+
+            if (wasPlayingContinuouslyLastFrame != m_playIsContinuous)
+            {
+                if (m_playIsContinuous)
+                {
+                    // pick up where it left off for iterations left
+                    gamesLeftToPlay = gamesLeftToPlayPrev;
+                }
+                else
+                {
+                    // just finish the current game
+                    gamesLeftToPlayPrev = gamesLeftToPlay;
+                    gamesLeftToPlay = 1;
                 }
             }
 
