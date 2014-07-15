@@ -38,7 +38,8 @@ RLGame::RLGame(GameObject & object) :
     StateMachine(object),
     m_RLearner(),
     m_punishmentValue(0.f),
-    m_rewardValue(0.f)
+    m_rewardValue(0.f),
+    m_playIsContinuous(true)
 {
 
 }
@@ -91,6 +92,10 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                 m_iterationsPerFrame = cSpeedSuperSlow;
                 break;
         }
+
+    OnMsg(MSG_SetPlayContinuous)
+        m_playIsContinuous = msg->GetBoolData();
+        break;
 
     OnMsg(MSG_StartLearning)
         if (m_RLearner.GetRunning())
@@ -242,8 +247,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
 			m_RLearner.SetPlaying(true);
             m_RLearner.getWorld().ResetState(); // Resets starting positions.
 
-            // TODO: determine whether to apply this to all speeds
-            if (m_iterationsPerFrame >= cSpeedFast)
+            if (m_playIsContinuous)
             {
                 gamesLeftToPlay = m_trainingIterations;
             }
