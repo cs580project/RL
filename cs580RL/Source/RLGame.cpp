@@ -109,6 +109,18 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
             ChangeState(STATE_Learning);
         }
 
+    OnMsg(MSG_StartPlaying)
+        if (m_RLearner.GetPlaying())
+        {
+            m_RLearner.SetPlaying(false);
+            g_trainingStatus = 0;
+            ChangeState(STATE_Waiting);
+        }
+        else
+        {
+            ChangeState(STATE_Playing);
+        }
+
 	///////////////////////////////////////////////////////////////
     DeclareState(STATE_Initialize)
 
@@ -142,9 +154,6 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
         OnMsg(MSG_SetMethod_UseQL)
             if (msg->GetBoolData()) m_learningMethod = LearningMethod::Q_LEARNING;
             else m_learningMethod = LearningMethod::SARSA;
-
-        OnMsg(MSG_StartPlaying)
-            ChangeState(STATE_Playing);
 
 
 	///////////////////////////////////////////////////////////////
@@ -248,6 +257,8 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
             elapsedTime = 0.f;
 			m_RLearner.SetPlaying(true);
             m_RLearner.getWorld().ResetState(); // Resets starting positions.
+
+            g_trainingStatus = 3;
 
             // force it to update this state on the first frame
             wasPlayingContinuouslyLastFrame = !m_playIsContinuous;
@@ -387,6 +398,7 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
 
                 if (gamesLeftToPlay <= 0)
                 {
+                    g_trainingStatus = 0;
                     ChangeState(STATE_Waiting);
                 }
             }
