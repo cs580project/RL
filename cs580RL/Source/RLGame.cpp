@@ -273,6 +273,10 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                     g_database.SendMsgFromSystem(10, MSG_Reset, MSG_Data(true));
                     g_database.SendMsgFromSystem(11, MSG_Reset, MSG_Data(true));
                 }
+                else
+                {
+                    loop = true;
+                }
             }
 
             if (loop)
