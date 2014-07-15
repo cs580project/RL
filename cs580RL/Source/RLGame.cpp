@@ -295,7 +295,6 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                         }
                     }
 
-                    // TODO: update score separately from training
                     g_catWin = m_RLearner.getWorld().GetCatPlayingScore();
                     g_mouseWin = m_RLearner.getWorld().GetMousePlayingScore();
                     m_RLearner.getWorld().ResetState(); // Resets starting positions.
@@ -391,6 +390,6 @@ void RLGame::ChangeAgentSpeeds()
     }
     else
     {
-        // TODO: Iterations per frame
+        // doesn't matter, will run all iterations before allowing a frame update.
     }
 }
