@@ -777,7 +777,7 @@ void RenderText()
 	int y = 5;
 	LPRECT winRect = new RECT;
 	GetWindowRect(DXUTGetHWND(), winRect);
-	long winMidHor = (winRect->left + winRect->right) / 2 - winRect->left;
+	long winMidHor = (winRect->left + winRect->right) / 2 - winRect->left-80;
 	long winMidVer = (winRect->bottom + winRect->top) / 2 - winRect->top;
 	long winWidth = winRect->right - winRect->left;
 	long winHeight = winRect->top - winRect->bottom;
@@ -806,12 +806,23 @@ void RenderText()
 	
 	txtHelper.SetInsertionPos(winMidHor, y);
 	txtHelper.DrawFormattedTextLine(L"MOUSE/Train:         %d", g_trainMouseWin);
+
+	txtHelper.SetInsertionPos(winMidHor+150, y);
+	float winningRateTraining = 0;
+	if (g_trainCatWin + g_trainMouseWin > 0)
+		winningRateTraining = static_cast<float>(g_trainMouseWin) / (g_trainCatWin + g_trainMouseWin)*100;
+	txtHelper.DrawFormattedTextLine(L"winning rate/Train:    %f", winningRateTraining);
 	//Print on Cat&Mouse win
-	txtHelper.SetInsertionPos(winMidHor - 125, y+=13);
+	txtHelper.SetInsertionPos(winMidHor - 125, y+=21);
 	txtHelper.DrawFormattedTextLine(L"CAT:                   %d", g_catWin);
 	txtHelper.SetInsertionPos(winMidHor, y);
 	txtHelper.DrawFormattedTextLine(L"MOUSE                     %d", g_mouseWin);
 
+	txtHelper.SetInsertionPos(winMidHor + 150, y);
+	float winningRatePlaying = 0;
+	if (g_catWin + g_mouseWin > 0)
+		winningRatePlaying = static_cast<float>(g_mouseWin) / (g_catWin + g_mouseWin) * 100;
+	txtHelper.DrawFormattedTextLine(L"winning rate:    %f", winningRatePlaying);
 	//y += 35;int bBH = (int)(winHeight*(-0.092));	//button height
 	//print current iteration
 	g_cureIteration = g_catWin + g_mouseWin;
