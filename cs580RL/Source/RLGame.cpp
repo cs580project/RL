@@ -379,6 +379,9 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                         {
                             startPos = false;
                         }
+
+                        // Always update the mouse's score, since it can change before game ends.
+                        g_mouseWin = m_RLearner.getWorld().GetMousePlayingScore();
                     }
                 }
 
