@@ -119,9 +119,9 @@ D3DXVECTOR3				g_click3D;
 #define IDC_PUNISH 28
 #define IDC_REWARD 29
 #define IDC_LOOP_1000 30
-#define IDC_LOOP_3000 31
-#define IDC_LOOP_5000 32
-#define IDC_LOOP_10000 33
+#define IDC_LOOP_5000 31
+#define IDC_LOOP_10000 32
+#define IDC_LOOP_50000 33
 #define IDC_METHOD_QL 34
 #define IDC_METHOD_SARSA 35
 #define IDC_START_TRAINING 36
@@ -268,10 +268,10 @@ void InitApp()
 	g_SampleUI.AddButton(IDC_REWARD,L"Reward",100, iY, 60, 24);
 
 	g_SampleUI.AddButton(IDC_LOOP_1000, L"1000", 40, iY+=52, 60, 24);
-	g_SampleUI.AddButton(IDC_LOOP_3000, L"3000", 100, iY, 60, 24);
+	g_SampleUI.AddButton(IDC_LOOP_5000, L"5000", 100, iY, 60, 24);
 
-	g_SampleUI.AddButton(IDC_LOOP_5000, L"5000", 40, iY += 26, 60, 24);
-	g_SampleUI.AddButton(IDC_LOOP_10000, L"10000", 100, iY, 60, 24);
+	g_SampleUI.AddButton(IDC_LOOP_10000, L"10000", 40, iY += 26, 60, 24);
+	g_SampleUI.AddButton(IDC_LOOP_50000, L"50000", 100, iY, 60, 24);
 
 	g_SampleUI.AddButton(IDC_METHOD_QL, L"Q-Learning", 40, iY += 52, 60, 24);
 	g_SampleUI.AddButton(IDC_METHOD_SARSA, L"SARSA", 100, iY, 60, 24);
@@ -1183,16 +1183,16 @@ case IDC_LOOP_1000:
 	g_trainloop = 1000;
 	g_database.SendMsgFromSystem(MSG_SetTrainLoop, MSG_Data(g_trainloop));
 	break;
-case IDC_LOOP_3000:
-	g_trainloop = 3000;
-	g_database.SendMsgFromSystem(MSG_SetTrainLoop, MSG_Data(g_trainloop));
-	break;
 case IDC_LOOP_5000:
 	g_trainloop = 5000;
 	g_database.SendMsgFromSystem(MSG_SetTrainLoop, MSG_Data(g_trainloop));
 	break;
 case IDC_LOOP_10000:
 	g_trainloop = 10000;
+	g_database.SendMsgFromSystem(MSG_SetTrainLoop, MSG_Data(g_trainloop));
+	break;
+case IDC_LOOP_50000:
+	g_trainloop = 50000;
 	g_database.SendMsgFromSystem(MSG_SetTrainLoop, MSG_Data(g_trainloop));
 	break;
 case IDC_METHOD_QL:
@@ -1335,10 +1335,10 @@ void  RedrawButtons()
 	g_SampleUI.AddButton(IDC_REWARD, L"Reward", rightSide - bBW, iY, bBW, bBH);
 
 	g_SampleUI.AddButton(IDC_LOOP_1000, L"1000", rightSide - (int)(2.05*bBW), iY += gapVer, bBW, bBH);
-	g_SampleUI.AddButton(IDC_LOOP_3000, L"3000", rightSide - bBW, iY, bBW, bBH);
+	g_SampleUI.AddButton(IDC_LOOP_5000, L"5000", rightSide - bBW, iY, bBW, bBH);
 
-	g_SampleUI.AddButton(IDC_LOOP_5000, L"5000", rightSide - (int)(2.05*bBW), iY += (int)(gapVer / 2), bBW, bBH);
-	g_SampleUI.AddButton(IDC_LOOP_10000, L"10000", rightSide - bBW, iY, bBW, bBH);
+	g_SampleUI.AddButton(IDC_LOOP_10000, L"10000", rightSide - (int)(2.05*bBW), iY += (int)(gapVer / 2), bBW, bBH);
+	g_SampleUI.AddButton(IDC_LOOP_50000, L"50000", rightSide - bBW, iY, bBW, bBH);
 
 	g_SampleUI.AddButton(IDC_METHOD_QL, L"Q-Learning", rightSide - (int)(2.05*bBW), iY += gapVer, bBW, bBH);
 	g_SampleUI.AddButton(IDC_METHOD_SARSA, L"SARSA", rightSide - bBW, iY, bBW, bBH);
