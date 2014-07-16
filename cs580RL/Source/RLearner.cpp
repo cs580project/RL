@@ -117,7 +117,7 @@ int RLearner::SelectAction(vector<int>& state)
 	{
 	case E_GREEDY:
 
-		if (rand() % 1000 > 0)
+		//if (rand() % 1000 > 0)
 		{
 			vector<float>& qvalues = m_policy.getQValues(state);
 

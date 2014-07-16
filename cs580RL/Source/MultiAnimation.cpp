@@ -802,27 +802,27 @@ void RenderText()
 	//Print on Cat&Mouse win
 	txtHelper.SetForegroundColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
 	txtHelper.SetInsertionPos(winMidHor - 125, y);
-	txtHelper.DrawFormattedTextLine(L"CAT/Train:         %d", g_trainCatWin);
+	txtHelper.DrawFormattedTextLine(L"CAT/Train: %d", g_trainCatWin);
 	
-	txtHelper.SetInsertionPos(winMidHor, y);
-	txtHelper.DrawFormattedTextLine(L"MOUSE/Train:         %d", g_trainMouseWin);
+	txtHelper.SetInsertionPos(winMidHor - 10, y);
+	txtHelper.DrawFormattedTextLine(L"MOUSE/Train: %d", g_trainMouseWin);
 
-	txtHelper.SetInsertionPos(winMidHor+150, y);
+	txtHelper.SetInsertionPos(winMidHor+120, y);
 	float winningRateTraining = 0;
 	if (g_trainCatWin + g_trainMouseWin > 0)
 		winningRateTraining = static_cast<float>(g_trainMouseWin) / (g_trainCatWin + g_trainMouseWin)*100;
-	txtHelper.DrawFormattedTextLine(L"winning rate/Train:    %f", winningRateTraining);
+	txtHelper.DrawFormattedTextLine(L"winning rate/Train: %f", winningRateTraining);
 	//Print on Cat&Mouse win
 	txtHelper.SetInsertionPos(winMidHor - 125, y+=21);
-	txtHelper.DrawFormattedTextLine(L"CAT:                   %d", g_catWin);
-	txtHelper.SetInsertionPos(winMidHor, y);
-	txtHelper.DrawFormattedTextLine(L"MOUSE                     %d", g_mouseWin);
+	txtHelper.DrawFormattedTextLine(L"CAT: %d", g_catWin);
+	txtHelper.SetInsertionPos(winMidHor - 10, y);
+	txtHelper.DrawFormattedTextLine(L"MOUSE: %d", g_mouseWin);
 
-	txtHelper.SetInsertionPos(winMidHor + 150, y);
+	txtHelper.SetInsertionPos(winMidHor + 120, y);
 	float winningRatePlaying = 0;
 	if (g_catWin + g_mouseWin > 0)
 		winningRatePlaying = static_cast<float>(g_mouseWin) / (g_catWin + g_mouseWin) * 100;
-	txtHelper.DrawFormattedTextLine(L"winning rate:    %f", winningRatePlaying);
+	txtHelper.DrawFormattedTextLine(L"winning rate: %f", winningRatePlaying);
 	//y += 35;int bBH = (int)(winHeight*(-0.092));	//button height
 	//print current iteration
 	g_cureIteration = g_catWin + g_mouseWin;
