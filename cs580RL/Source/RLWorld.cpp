@@ -226,13 +226,14 @@ void RLWorld::MoveCat()
 	cy      = nPos.y;
 }
 
-void RLWorld::MoveMouse()
+int RLWorld::MoveMouse()
 {
 	Pos nPos;
 
 	nPos    = MoveToNewPos(mx, my, chx, chy);
 	mx      = nPos.x;
 	my      = nPos.y;
+	return getAction(mx, my);
 }
 
 Pos RLWorld::MoveToNewPos(int currentx, int currenty, int targetx, int targety)
@@ -357,6 +358,18 @@ Pos RLWorld::GetCoords(int action)
 	}
 
 	return nPos;
+}
+
+int RLWorld::getAction(int x, int y)
+{
+	int vals[3][3] =
+	{ { 7, 0, 1 },
+	{ 6, 0, 2 },
+	{ 5, 4, 3 } };
+
+	if ((x<-1) || (x>1) || (y<-1) || (y>1) || ((y == 0) && (x == 0))) return -1;
+	int retVal = vals[y + 1][x + 1];
+	return retVal;
 }
 
 void RLWorld::DrawRLState(bool teleport)

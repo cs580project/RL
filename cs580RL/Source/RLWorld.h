@@ -44,12 +44,12 @@ private:
     Pos     GetCoords(int action);
     Pos     GetRandomPos();
     void    SetRandomPos();
-    void    MoveMouse();	    //no learning
+    int    MoveMouse();	    //no learning
     void    MoveCat();
     void    UpdateScores(bool playing);
     bool    CatScored();
     bool    MouseScored();
-
+	int		getAction(int, int);
 	vector<int> stateArray;
 	int     catScoresTraining, mouseScoresTraining;	//keep the score
     int     catScoresPlaying,  mouseScoresPlaying;	//keep the score
