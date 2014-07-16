@@ -228,12 +228,8 @@ void RLWorld::MoveCat()
 
 int RLWorld::MoveMouse()
 {
-	Pos nPos;
-
-	nPos    = MoveToNewPos(mx, my, chx, chy);
-	mx      = nPos.x;
-	my      = nPos.y;
-	return getAction(mx, my);
+	Pos nPos = MoveToNewPos(mx, my, chx, chy);;
+	return getAction(nPos.x - mx, nPos.y-my);
 }
 
 Pos RLWorld::MoveToNewPos(int currentx, int currenty, int targetx, int targety)
