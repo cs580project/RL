@@ -26,6 +26,7 @@ public:
 	bool            ValidAction(int action);	//check if the action is legal
     bool            EndState();
     void            DrawRLState(bool teleport);
+    int             SelectGreedyAction();
 
     int  GetCatTrainingScore()      { return catScoresTraining;     };
     int  GetCatPlayingScore()       { return catScoresPlaying;      };

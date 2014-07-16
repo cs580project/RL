@@ -22,12 +22,13 @@ public:
 	~RLGame(){}
 
 private:
-    virtual bool States(State_Machine_Event event, MSG_Object * msg, int state, int substate);
+    virtual bool    States(State_Machine_Event event, MSG_Object * msg, int state, int substate);
 
-    void ChangeAgentSpeeds();
+    void            ChangeAgentSpeeds();
 
 	RLearner        m_RLearner;
 
+    bool            m_useSmartMouse;
     bool            m_playIsContinuous;
     float           m_punishmentValue;
     float           m_rewardValue;
@@ -36,4 +37,3 @@ private:
     int             m_iterationsPerFrame;
 
 };
-

@@ -39,7 +39,8 @@ RLGame::RLGame(GameObject & object) :
     m_RLearner(),
     m_punishmentValue(0.f),
     m_rewardValue(0.f),
-    m_playIsContinuous(true)
+    m_playIsContinuous(true),
+    m_useSmartMouse(false)
 {
 
 }
@@ -95,7 +96,11 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
 
     OnMsg(MSG_SetPlayContinuous)
         m_playIsContinuous = msg->GetBoolData();
-        break;
+
+
+    OnMsg(MSG_UseSmartMouse)
+        m_useSmartMouse = msg->GetBoolData();
+
 
     OnMsg(MSG_StartLearning)
         if (m_RLearner.GetRunning())
@@ -313,7 +318,16 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                     static const int maxRoundsBeforeTie = 1000;
                     for (int j = 0; j < maxRoundsBeforeTie; ++j)
                     {
-                        int action = m_RLearner.SelectAction(m_RLearner.getWorld().GetCurrentState());
+                        int action;
+                        if (m_useSmartMouse)
+                        {
+                            action = m_RLearner.SelectAction(m_RLearner.getWorld().GetCurrentState());
+                        }
+                        else
+                        {
+                            action = m_RLearner.getWorld().SelectGreedyAction();
+                        }
+
                         m_RLearner.getWorld().GetNextState(action, false);
 
                         if (m_RLearner.getWorld().EndState())
@@ -371,7 +385,15 @@ bool RLGame::States(State_Machine_Event event, MSG_Object * msg, int state, int 
                     }
                     else
                     {
-                        int action = m_RLearner.SelectAction(m_RLearner.getWorld().GetCurrentState());
+                        int action;
+                        if (m_useSmartMouse)
+                        {
+                            action = m_RLearner.SelectAction(m_RLearner.getWorld().GetCurrentState());
+                        }
+                        else
+                        {
+                            action = m_RLearner.getWorld().SelectGreedyAction();
+                        }
 
                         m_RLearner.getWorld().GetNextState(action, false);
 

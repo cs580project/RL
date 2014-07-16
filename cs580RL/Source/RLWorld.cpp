@@ -46,7 +46,10 @@ vector<int>& RLWorld::GetNextState(int action, bool update)
 	}
 	else
 	{
-		//illegal action, do something
+        Pos pos = MoveToNewPos(mx, my, nPos.x, nPos.y);
+
+        mx = pos.x;
+        my = pos.y;
 	}
 
 	// update world
@@ -375,4 +378,29 @@ void RLWorld::DrawRLState(bool teleport)
 
     g_terrain.ResetColors();
 	g_terrain.SetColor(chx,chy, DEBUG_COLOR_BLUE);
+}
+
+
+int RLWorld::SelectGreedyAction()
+{
+    int lowestAction = 0;
+    int lowestDistSq = INT_MAX;
+
+    for (int i = 0; i < 8; ++i)
+    {
+        Pos coords = GetCoords(i);
+
+        int deltaX = coords.x - chx;
+        int deltaY = coords.y - chy;
+
+        int distSq = deltaX * deltaX + deltaY * deltaY;
+
+        if (distSq < lowestDistSq)
+        {
+            lowestDistSq = distSq;
+            lowestAction = i;
+        }
+    }
+
+    return lowestAction;
 }
