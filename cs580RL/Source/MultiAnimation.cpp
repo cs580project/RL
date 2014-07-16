@@ -82,6 +82,9 @@ unsigned int			g_mouseWin = 0;
 unsigned int			g_trainCatWin = 0;
 unsigned int			g_trainMouseWin = 0;
 
+bool					g_playContinuous = false;
+bool					g_useSmartMouse = false;
+
 D3DXVECTOR3				g_click2D;
 D3DXVECTOR3				g_click3D;
 
@@ -133,6 +136,9 @@ D3DXVECTOR3				g_click3D;
 #define IDC_SPEED_FAST 42
 #define IDC_SPEED_TURBO 43
 #define IDC_CLEAR_SCORE 44
+#define IDC_TOOGLE_CONTINUOUS 45
+#define IDC_TOOGLE_SMART_MOUSE 46
+#define IDC_TOOGLE_GREEDY_MOUSE 47
 
 //--------------------------------------------------------------------------------------
 // Forward declarations
@@ -844,13 +850,29 @@ void RenderText()
 	else
 		txtHelper.DrawFormattedTextLine(L"Current:SARSA");
 
+	int lefty = (int)(winHeight*(-0.29)*1.75);
+	
+	//print greedy/smart and continuous status
+	txtHelper.SetInsertionPos(20, lefty);
+	if (g_useSmartMouse)
+		txtHelper.DrawFormattedTextLine(L"Use Smart Mouse");
+	else
+		txtHelper.DrawFormattedTextLine(L"Use Greedy Mouse");
+
+	txtHelper.SetInsertionPos(20, lefty += (int)(bBH * 2));
+	
+	if (g_playContinuous)
+		txtHelper.DrawFormattedTextLine(L"Continuous: On");
+	else
+		txtHelper.DrawFormattedTextLine(L"Continuous: Off");
+
 	//print punish and reward
 	txtHelper.SetInsertionPos(5, 5);
 	txtHelper.DrawFormattedTextLine(L"Punish:%f", g_punish);
 	txtHelper.SetInsertionPos(5, 20);
 	txtHelper.DrawFormattedTextLine(L"Reward:%f", g_reward);
 
-
+	
 	//print speed info
 	txtHelper.SetInsertionPos(5, 40);
 	switch (g_RLspeed)
@@ -1241,6 +1263,21 @@ case IDC_SPEED_TURBO:
     g_database.SendMsgFromSystem(MSG_SetRLSpeed, MSG_Data(g_RLspeed));
 	break;
 
+case IDC_TOOGLE_CONTINUOUS:
+	if (g_playContinuous) g_playContinuous = false;
+	else g_playContinuous = true;
+	g_database.SendMsgFromSystem(MSG_SetPlayContinuous, MSG_Data(g_playContinuous));
+	break;
+
+case IDC_TOOGLE_SMART_MOUSE:
+	g_useSmartMouse = true;
+	g_database.SendMsgFromSystem(MSG_UseSmartMouse, MSG_Data(g_useSmartMouse));
+	break;
+
+case IDC_TOOGLE_GREEDY_MOUSE:
+	g_useSmartMouse = false;
+	g_database.SendMsgFromSystem(MSG_UseSmartMouse, MSG_Data(g_useSmartMouse));
+	break;
 
     }
 }
@@ -1323,7 +1360,7 @@ void  RedrawButtons()
 	int sBHorOffset2 = (int)(winWidth / 2 * 0.435);
 	g_SampleUI.SetCallback(OnGUIEvent); 
 	int rightSide = 170;
-
+	
 	int bBW = (int)(winWidth*0.18);	//button width
 	int bBH = (int)(winHeight*(-0.092));	//button height
 	g_SampleUI.AddButton(IDC_NEXTMAP, L"Next Map", rightSide - (int)(1.02*bBW), iY, bBW, bBH);
@@ -1350,9 +1387,21 @@ void  RedrawButtons()
 
 	g_SampleUI.AddButton(IDC_RESET_RL, L"Reset Learner", rightSide - (int)(1.02*bBW), iY += (int)(gapVer * 1.4), bBW, bBH/2);
 	g_SampleUI.AddButton(IDC_CLEAR_SCORE, L"Clear Scores", rightSide - (int)(1.02*bBW), iY += gapVer/2, bBW, bBH/2);
-	g_SampleUI.AddButton(IDC_START_PLAYING, L"Start/stop playing", rightSide - (int)(1.02*bBW), iY += gapVer/2, bBW, bBH);
 
+	iY = (int)(-winHeight*0.4);
 
+	bBW = (int)(winWidth*0.09);	//button width
+	bBH = (int)(winHeight*(-0.046));	//button height
+	int leftSide = 206-winWidth;		//magic number
+
+	g_SampleUI.AddButton(IDC_TOOGLE_SMART_MOUSE, L"Smart", leftSide, iY += gapVer / 2, bBW, bBH);
+	g_SampleUI.AddButton(IDC_TOOGLE_GREEDY_MOUSE, L"Greedy", leftSide + (int)(1.02*bBW), iY, bBW, bBH);
+	
+	g_SampleUI.AddButton(IDC_TOOGLE_CONTINUOUS, L"Play Continuous", leftSide, iY += gapVer, bBW*2, bBH);
+	
+	g_SampleUI.AddButton(IDC_START_PLAYING, L"Start/stop playing", leftSide, iY += gapVer, bBW*2, bBH*2);
+	
+	
 	int sBVerOffset = (int)(winHeight / 2 * 0.78);
 	int sBHorOffset = (int)(winWidth / 2 * 0.25);
 	int sBW         = (int)(winWidth*0.1);			// speed button width
