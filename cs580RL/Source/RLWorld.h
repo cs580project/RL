@@ -45,7 +45,6 @@ private:
     Pos     GetCoords(int action);
     Pos     GetRandomPos();
     void    SetRandomPos();
-    int    MoveMouse();	    //no learning
     void    MoveCat();
     void    UpdateScores(bool playing);
     bool    CatScored();
