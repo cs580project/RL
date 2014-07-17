@@ -142,7 +142,7 @@ void World::Initialize( CMultiAnim *pMA, std::vector< CTiny* > *pv_pChars, CSoun
 		agent->CreateStateMachineManager();
 		agent->GetStateMachineManager()->PushStateMachine( *new RLAgent( *agent ), STATE_MACHINE_QUEUE_0, true );
 
-        agent->GetTiny().SetDiffuse(0.f, 0.f, 1.f);
+        agent->GetTiny().SetDiffuse(1.f, 1.f, 0.f);
         agent->GetMovement().SetWaypointDebugDrawingColor(DebugDrawingColor::DEBUG_COLOR_BLUE);
     }
 

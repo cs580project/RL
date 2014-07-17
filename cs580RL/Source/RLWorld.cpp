@@ -381,7 +381,7 @@ void RLWorld::DrawRLState(bool teleport)
     }
 
     g_terrain.ResetColors();
-	g_terrain.SetColor(chx,chy, DEBUG_COLOR_BLUE);
+	g_terrain.SetColor(chx, chy, DEBUG_COLOR_GREEN);
 }
 
 
