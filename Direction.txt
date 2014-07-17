@@ -1,0 +1,17 @@
+Here is a very brief direction to run the demo.
+
+1.Play using greedy mouse. observe the winning rate and mouse behavior.
+
+2.Play using smart mouse without training.
+
+3.Train for 5000 times and play game and observe the winning rate and mouse behavior.
+
+4.Train for more 50000 time and play. observe the winning rate and mouse behavior.
+	conclusion 1: the more training, the better agent you get.
+
+5.Switch to next map and training 20000 times and play. observe the winning rate and mouse behavior.
+	conclusion 2: different maps matters a lot!
+
+6.Change punish to 100 and do it again. observe the winning rate and mouse behavior.
+	conclusion 3: differnet punish and reward generate different behavior.
+
